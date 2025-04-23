@@ -51,3 +51,21 @@ spec:
   endpoints:
     - port: metrics
       interval: "${MONARCH_MONITORING_INTERVAL}"
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gnb-servicemonitor
+  namespace: monarch
+  labels:
+    nf: gnb
+    app: monarch
+spec:
+  namespaceSelector:
+    any: true # important otherwise this is not picked up
+  selector:
+    matchLabels:
+      nf: gnb # target gnb service
+  endpoints:
+    - port: metrics
+      interval: "${MONARCH_MONITORING_INTERVAL}"

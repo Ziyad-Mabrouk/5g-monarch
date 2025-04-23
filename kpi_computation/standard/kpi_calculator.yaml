@@ -19,7 +19,7 @@ spec:
         component: kpi-calculator
     spec:
       containers:
-        - image: ghcr.io/niloysh/kpi-calculator-open5gs:v1.0.0-standard
+        - image: ghcr.io/ziyad-mabrouk/kpi-calculator-open5gs:v1.0.0-standard
           name: kpi-calculator
           imagePullPolicy: Always
           ports:

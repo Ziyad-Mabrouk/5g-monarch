@@ -12,7 +12,7 @@ class DirectiveManager:
     def process_directive(self, directive):
         self.logger.info("Processing directive: %s", directive)
         kpi_name = directive["kpi_name"]
-        if kpi_name == "slice_throughput":
+        if kpi_name == "slice_throughput" or kpi_name == "test":
             return self.process_slice_throughput_directive(directive)
 
         else:

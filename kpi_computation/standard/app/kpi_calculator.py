@@ -26,6 +26,7 @@ TIME_RANGE = os.getenv("TIME_RANGE", "5s")
 
 # Prometheus variables
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
+TEST_KPI = prom.Gauge('test', 'Average RSRP from gNB', ['snssai', 'pod_name'])
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
 prom.REGISTRY.unregister(prom.PLATFORM_COLLECTOR)
@@ -81,6 +82,24 @@ def get_slice_throughput_per_seid_and_direction(snssai, direction):
 
     return throughput_per_seid
 
+def get_gnb_average_rsrp(snssai):
+    """
+    Query Prometheus for average RSRP per gNB for a given SNSSAI.
+    """
+    time_range = TIME_RANGE
+    query = f'avg by (pod_name) (gnb_average_rsrp_db{{snssai="{snssai}"}}[{time_range}])'
+    log.debug(query)
+    params = {'query': query}
+    results = query_prometheus(params, MONARCH_THANOS_URL)
+
+    rsrp_per_gnb = {}
+    if results:
+        for result in results:
+            pod_name = result["metric"]["pod_name"]
+            value = float(result["value"][1])
+            rsrp_per_gnb[pod_name] = value
+
+    return rsrp_per_gnb
    
 def get_active_snssais():
     """
@@ -118,6 +137,10 @@ def export_to_prometheus(snssai, seid, direction, value):
     log.info(f"SNSSAI={snssai} | SEID={seid} | DIR={direction:8s} | RATE (Mbps)={value_mbits}")
     SLICE_THROUGHPUT.labels(snssai=snssai, seid=seid, direction=direction).set(value)
 
+def export_test_kpi_to_prometheus(snssai, pod_name, value):
+    log.info(f"SNSSAI={snssai} | GNB={pod_name} | AVG RSRP={value} dB")
+    TEST_KPI.labels(snssai=snssai, pod_name=pod_name).set(value)
+
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
     active_snssais = get_active_snssais()
@@ -132,6 +155,9 @@ def run_kpi_computation():
             for seid, value in throughput_per_seid.items():
                 export_to_prometheus(snssai, seid, direction, value)
 
+    rsrp_per_gnb = get_gnb_average_rsrp(snssai)
+    for pod_name, value in rsrp_per_gnb.items():
+        export_test_kpi_to_prometheus(snssai, pod_name, value)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='KPI calculator.')

@@ -19,7 +19,7 @@ spec:
         component: request-translator
     spec:
       containers:
-        - image: ghcr.io/niloysh/request-translator:v1.0.0
+        - image: ghcr.io/ziyad-mabrouk/request-translator:v1.0.0
           name: request-translator
           imagePullPolicy: Always
           ports:

@@ -4,5 +4,12 @@
         "kpi_description": "Throughput per slice",
         "kpi_unit": "bits/sec",
         "kpi_prom_metric_name": "slice_throughput"
+    },
+    
+    {
+        "kpi_name": "test",
+        "kpi_description": "test",
+        "kpi_unit": "test",
+        "kpi_prom_metric_name": "test"
     }
 ]
