@@ -26,7 +26,7 @@ TIME_RANGE = os.getenv("TIME_RANGE", "5s")
 
 # Prometheus variables
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
-TEST_KPI = prom.Gauge('test', 'Average RSRP from gNB', ['snssai', 'pod_name'])
+TEST_KPI = prom.Gauge('test', 'test', ['snssai', 'pod_name'])
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
 prom.REGISTRY.unregister(prom.PLATFORM_COLLECTOR)
@@ -82,24 +82,22 @@ def get_slice_throughput_per_seid_and_direction(snssai, direction):
 
     return throughput_per_seid
 
-def get_gnb_average_rsrp(snssai):
+def get_test():
     """
-    Query Prometheus for average RSRP per gNB for a given SNSSAI.
+    Aggregate total TX bytes across all RNTIs.
     """
-    time_range = TIME_RANGE
-    query = f'avg by (pod_name) (gnb_average_rsrp_db{{snssai="{snssai}"}}[{time_range}])'
+    query = 'sum(oai_gnb_mac_tx_bytes)'
     log.debug(query)
     params = {'query': query}
     results = query_prometheus(params, MONARCH_THANOS_URL)
 
-    rsrp_per_gnb = {}
     if results:
-        for result in results:
-            pod_name = result["metric"]["pod_name"]
-            value = float(result["value"][1])
-            rsrp_per_gnb[pod_name] = value
-
-    return rsrp_per_gnb
+        tx_bytes = float(results[0]["value"][1])
+        TEST_KPI.set(tx_bytes)
+        return tx_bytes
+    else:
+        TEST_KPI.set(0)
+        return 0
    
 def get_active_snssais():
     """
@@ -155,7 +153,7 @@ def run_kpi_computation():
             for seid, value in throughput_per_seid.items():
                 export_to_prometheus(snssai, seid, direction, value)
 
-    rsrp_per_gnb = get_gnb_average_rsrp(snssai)
+    rsrp_per_gnb = get_test(snssai)
     for pod_name, value in rsrp_per_gnb.items():
         export_test_kpi_to_prometheus(snssai, pod_name, value)
 
