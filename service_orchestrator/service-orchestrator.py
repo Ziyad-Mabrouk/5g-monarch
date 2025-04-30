@@ -56,6 +56,7 @@ class DummyServiceOrchestrator:
     def _set_routes(self):
         self.app.add_url_rule("/slices/<slice_id>", "get_slice_components", self.get_slice_components, methods=["GET"])
         self.app.add_url_rule("/api/health", "check_health", self.check_health, methods=["GET"])
+        self.app.add_url_rule("/get_gnb", "get_gnb", self.get_gnb, methods=["GET"])
 
     def get_slice_components(self, slice_id):
         if slice_id not in self.slice_info:
@@ -116,6 +117,33 @@ class DummyServiceOrchestrator:
             slice_info = json.load(file)
             self.logger.info(f"Slice info loaded: {slice_info}")
         return slice_info
+    
+    def get_gnb(self):
+        try:
+            pods_info = self._get_pods_info()
+            for pod in pods_info["items"]:
+                pod_info = {}
+                metadata = pod.get("metadata", {})
+                name = metadata.get("name", "")
+                nf = metadata.get("labels", {}).get("nf", "")
+                pod_ip = pod.get("status", {}).get("podIP", "")
+                self.logger.info(f"pod info loaded: {pod}")
+
+                if nf == "gnb":
+                    pod_info["name"] = name
+                    pod_info["pod_ip"] = pod_ip
+                    pod_info["nss"] = "edge"
+                    pod_info["nf"] = nf
+                    break
+
+            if pod_info:
+                return jsonify({"status": "success", "pod": pod_info}), 200
+            else:
+                return jsonify({"status": "error", "message": "Failed to retrieve gNB pod info: no gNB pod found", "pods": pods_info}), 500
+
+        except Exception as e:
+            self.logger.error(f"Error retrieving gNB pod info: {str(e)}")
+            return jsonify({"status": "error", "message": "Failed to retrieve gNB pod info"}), 500
 
     def check_health(self):
         return jsonify({"status": "success", "message": "Service Orchestrator is healthy"}), 200

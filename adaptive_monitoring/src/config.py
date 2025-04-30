@@ -5,7 +5,7 @@ QUERIES = {
         sum by (seid) (
             rate(fivegs_ep_n3_gtp_indatavolumen3upf_seid[1m])
             * on (seid) group_right
-            sum(fivegs_smffunction_sm_seid_session{snssai="1-000001"}) by (seid, snssai)
+            sum(fivegs_smffunction_sm_seid_session{snssai="2-000001"}) by (seid, snssai)
         ) * 8
     ''',
 

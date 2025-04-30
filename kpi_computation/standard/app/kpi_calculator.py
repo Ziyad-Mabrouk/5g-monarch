@@ -26,7 +26,8 @@ TIME_RANGE = os.getenv("TIME_RANGE", "5s")
 
 # Prometheus variables
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
-TEST_KPI = prom.Gauge('test', 'test', ['snssai', 'pod_name'])
+MAC_THROUGHPUT = prom.Gauge('mac_throughput', 'MAC throughput per UE RNTI (bits/sec)', ['rnti', 'direction'])
+
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
 prom.REGISTRY.unregister(prom.PLATFORM_COLLECTOR)
@@ -82,22 +83,33 @@ def get_slice_throughput_per_seid_and_direction(snssai, direction):
 
     return throughput_per_seid
 
-def get_test():
+def get_mac_throughput_per_rnti_and_direction(direction):
     """
-    Aggregate total TX bytes across all RNTIs.
+    Returns throughput per UE RNTI for the specified direction: 'uplink' or 'downlink'.
+    Uses Prometheus metrics: oai_gnb_mac_tx_bytes or oai_gnb_mac_rx_bytes
+    Returns a dictionary of the form {rnti: value (bits/sec)}
     """
-    query = 'sum(oai_gnb_mac_tx_bytes)'
+    if direction == "uplink":
+        metric = "oai_gnb_mac_tx_bytes"
+    elif direction == "downlink":
+        metric = "oai_gnb_mac_rx_bytes"
+    else:
+        log.warning(f"Invalid MAC direction: {direction}")
+        return {}
+
+    query = f'rate({metric}[{TIME_RANGE}]) * 8'  # bytes/sec -> bits/sec
     log.debug(query)
     params = {'query': query}
     results = query_prometheus(params, MONARCH_THANOS_URL)
 
+    throughput_per_rnti = {}
     if results:
-        tx_bytes = float(results[0]["value"][1])
-        TEST_KPI.set(tx_bytes)
-        return tx_bytes
-    else:
-        TEST_KPI.set(0)
-        return 0
+        for result in results:
+            rnti = result["metric"]["rnti"]
+            value = float(result["value"][1])
+            if rnti:
+                throughput_per_rnti[rnti] = value
+    return throughput_per_rnti
    
 def get_active_snssais():
     """
@@ -135,9 +147,10 @@ def export_to_prometheus(snssai, seid, direction, value):
     log.info(f"SNSSAI={snssai} | SEID={seid} | DIR={direction:8s} | RATE (Mbps)={value_mbits}")
     SLICE_THROUGHPUT.labels(snssai=snssai, seid=seid, direction=direction).set(value)
 
-def export_test_kpi_to_prometheus(snssai, pod_name, value):
-    log.info(f"SNSSAI={snssai} | GNB={pod_name} | AVG RSRP={value} dB")
-    TEST_KPI.labels(snssai=snssai, pod_name=pod_name).set(value)
+def export_mac_throughput_to_prometheus(rnti, direction, value):
+    value_mbits = round(value / 10 ** 6, 6)
+    log.info(f"RNTI={rnti} | DIR={direction} | RATE (Mbps)={value_mbits}")
+    MAC_THROUGHPUT.labels(rnti=rnti, direction=direction).set(value)
 
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
@@ -153,9 +166,10 @@ def run_kpi_computation():
             for seid, value in throughput_per_seid.items():
                 export_to_prometheus(snssai, seid, direction, value)
 
-    rsrp_per_gnb = get_test(snssai)
-    for pod_name, value in rsrp_per_gnb.items():
-        export_test_kpi_to_prometheus(snssai, pod_name, value)
+    for direction in directions:
+        mac_throughput = get_mac_throughput_per_rnti_and_direction(direction)
+        for rnti, value in mac_throughput.items():
+            export_mac_throughput_to_prometheus(rnti, direction, value)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='KPI calculator.')

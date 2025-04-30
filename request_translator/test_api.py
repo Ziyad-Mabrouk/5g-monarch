@@ -20,8 +20,10 @@ def test_submit(json_file_path):
 
     # Print the response from the server
     print(f"Status Code: {response.status_code}")
-    print(f"Response: {response.json()}")
-
+    try:
+        print(f"Response: {response.json()}")
+    except ValueError:
+        print(f"Non-JSON response (status={response.status_code}): {response.text}")
 
 def list_kpis():
     list_kpis_url = f"{MONARCH_REQUEST_TRANSLATOR_URI}/api/supported-kpis"
@@ -62,7 +64,7 @@ if __name__ == "__main__":
         help="Action to perform: submit, list, delete, kpis (list supported KPIs)",
     )
     parser.add_argument(
-        "--json_file", default="requests/request_nf.json", help="Path to the JSON file (only for submit action)"
+        "--json_file", default="requests/request_slice.json", help="Path to the JSON file (only for submit action)"
     )
     parser.add_argument("--request_id", help="ID of the request to delete (only for delete action)")
 

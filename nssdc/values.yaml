@@ -62,7 +62,7 @@ prometheus:
     
     additionalScrapeConfigs:
       - job_name: "monarch-service"
-        scrape_interval: 100ms #changed from 1s to 100ms
+        scrape_interval: "${MONARCH_MONITORING_INTERVAL}" # use dynamic value instead of hard-coded one
         kubernetes_sd_configs:
           - role: service
             namespaces:

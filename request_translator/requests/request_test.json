@@ -1,13 +1,13 @@
 {
     "api_version": "1.0",
-    "request_description": "Monitoring request for test",
+    "request_description": "Monitoring request for MAC throughput",
     "scope": {
-        "scope_type": "slice",
-        "scope_id": "NSI01"
+        "scope_type": "ran",
+        "scope_id": "NSI02"
     },
     "kpi": {
-        "kpi_name": "test",
-        "kpi_description": "test",
+        "kpi_name": "mac_throughput",
+        "kpi_description": "MAC throughput from gNB",
         "sub_counter": {
             "sub_counter_type": "SNSSAI",
             "sub_counter_ids": [
@@ -15,7 +15,7 @@
                 "2-000001"
             ]
         },
-        "units": "test"
+        "units": "Mbps"
     },
     "duration": {
         "start_time": "2023-12-01T00:00:00Z",

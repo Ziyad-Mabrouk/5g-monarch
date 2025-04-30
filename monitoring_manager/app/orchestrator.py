@@ -35,6 +35,14 @@ class NFVOrchestratorManager:
     def mde_uninstall(self):
         response = requests.post(self.nfv_orchestrator_uri + "/mde/uninstall")
         return response
+    
+    def gnb_mde_install(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/gnb_mde/install")
+        return response
+
+    def gnb_mde_uninstall(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/gnb_mde/uninstall")
+        return response
 
     def kpi_computation_install(self):
         response = requests.post(self.nfv_orchestrator_uri + "/kpi-computation/install")

@@ -48,3 +48,17 @@ class ServiceOrchestratorManager:
         except requests.exceptions.RequestException as e:
             self.logger.error(f"Error retrieving slice components: {str(e)}")
             return None
+
+    def get_gnb(self):
+        try:
+            response = requests.get(self.service_orchestrator_uri + "/get_gnb")
+            if response.status_code == 200:
+                self.logger.info(f"Successfully retrieved gNB pod info")
+                pod = response.json()["pod"]
+                return pod
+            else:
+                self.logger.error(f"Error retrieving gNB pod info: {response.text}")
+                return None
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Error retrieving gNB pod info: {str(e)}")
+            return None

@@ -34,15 +34,15 @@ else
     exit 1
 fi
 
-# Fetch slice information for slice 1-000001 and capture the response
-print_subheader "Fetching slice information for slice 1-000001"
-slice_info=$(curl -s $BASE_URL/slices/1-000001)
+# Fetch slice information for slice 2-000001 and capture the response
+print_subheader "Fetching slice information for slice 2-000001"
+slice_info=$(curl -s $BASE_URL/slices/2-000001)
 
 # Check if the response contains valid data
 if [ -n "$slice_info" ]; then
-    print_success "Successfully retrieved slice information for slice 1-000001."
+    print_success "Successfully retrieved slice information for slice 2-000001."
     print_info "Slice Information: $slice_info"
 else
-    print_error "Failed to fetch slice information for slice 1-000001."
+    print_error "Failed to fetch slice information for slice 2-000001."
     exit 1
 fi

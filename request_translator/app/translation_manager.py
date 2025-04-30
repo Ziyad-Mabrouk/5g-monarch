@@ -14,8 +14,8 @@ class TranslationManager:
         if kpi_name == "slice_throughput":
             components = self.translate_slice_throughput(request)
 
-        elif kpi_name == "test":
-            components = self.translate_test(request)
+        elif kpi_name == "mac_throughput":
+            components = self.translate_mac_throughput(request)
 
         else:
             raise NotImplementedError(f"KPI '{kpi_name}' is not supported")
@@ -77,31 +77,29 @@ class TranslationManager:
         self.logger.debug(f"Components to monitor: {components_to_monitor}")
         return components_to_monitor
 
-    def translate_test(self, request):
+    def translate_mac_throughput(self, request):
         """
-        Translates the test request
+        Translates a MAC throughput request into metrics from gNB to monitor.
         """
-        self.logger.info("Translating test request...")
-        snssais = request["kpi"]["sub_counter"]["sub_counter_ids"]
-        self.logger.info(f"NSSAIs: {snssais}")
+        self.logger.info("Translating MAC throughput request...")
 
         components_to_monitor = []
 
-        # get pod_info for the NFs by interacting with the service orchestrator
-        for snssai in snssais:
-            pod_infos = self.service_orchestrator.get_slice_components(snssai)
-            self.logger.info(f"Pod info for SNSSAI {snssai}: {pod_infos}")
+        # get pod_info for the gNB by interacting with the service orchestrator
+        pod_info = self.service_orchestrator.get_gnb()
+        self.logger.info(f"Pod info for gNB: {pod_info}")
 
-        for pod_info in pod_infos:
-            component_info = {}
-            if pod_info["nf"] == "gnb":
-                component_info["type"] = "pod"
-                component_info["nf"] = "gnb"
-                component_info["nss"] = pod_info["nss"]
-                component_info["pod_name"] = pod_info["name"]
-                component_info["pod_ip"] = pod_info["pod_ip"]
-                component_info["metrics"] = ["gnb_average_rsrp_db"]
-                components_to_monitor.append(component_info)
+        component_info = {}
+        component_info["type"] = "pod"
+        component_info["nf"] = "gnb"
+        component_info["nss"] = "edge"
+        component_info["pod_name"] = pod_info["name"]
+        component_info["pod_ip"] = pod_info["pod_ip"]
+        component_info["metrics"] = [
+            "oai_gnb_mac_tx_bytes",
+            "oai_gnb_mac_rx_bytes"
+            ]
+        components_to_monitor.append(component_info)
 
         self.logger.debug(f"Components to monitor: {components_to_monitor}")
         return components_to_monitor

@@ -7,9 +7,9 @@
     },
     
     {
-        "kpi_name": "test",
-        "kpi_description": "test",
-        "kpi_unit": "test",
-        "kpi_prom_metric_name": "test"
+        "kpi_name": "mac_throughput",
+        "kpi_description": "MAC throughput per UE RNTI",
+        "kpi_unit": "bits/sec",
+        "kpi_prom_metric_name": "mac_throughput"
     }
 ]

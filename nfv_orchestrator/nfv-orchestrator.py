@@ -35,6 +35,9 @@ class DummyNFVOrchestrator:
         self.app.add_url_rule("/mde/install", "mde_install", self.mde_install, methods=["POST"])
         self.app.add_url_rule("/mde/uninstall", "mde_uninstall", self.mde_uninstall, methods=["POST"])
         self.app.add_url_rule("/mde/check", "mde_check", self.mde_check, methods=["POST"])
+        self.app.add_url_rule("/gnb_mde/install", "gnb_mde_install", self.gnb_mde_install, methods=["POST"])
+        self.app.add_url_rule("/gnb_mde/uninstall", "gnb_mde_uninstall", self.gnb_mde_uninstall, methods=["POST"])
+        self.app.add_url_rule("/gnb_mde/check", "gnb_mde_check", self.gnb_mde_check, methods=["POST"])
         self.app.add_url_rule(
             "/kpi-computation/install", "kpi_computation_install", self.kpi_computation_install, methods=["POST"]
         )
@@ -72,6 +75,33 @@ class DummyNFVOrchestrator:
             return jsonify({"status": "success", "message": "MDE test success", "output": result.stdout}), 200
         except subprocess.CalledProcessError as e:
             return jsonify({"status": "error", "message": "MDE test failed", "output": e.stderr}), 500
+        
+    def gnb_mde_install(self):
+        return_value = os.system(f"{WORKING_DIR}/../gnb_mde/install.sh")
+        if return_value != 0:
+            return jsonify({"status": "error", "message": "gNB MDE installation failed"}), 500
+        else:
+            return jsonify({"status": "success", "message": "gNB MDE installed"}), 200
+
+    def gnb_mde_uninstall(self):
+        return_value = os.system(f"{WORKING_DIR}/../gnb_mde/uninstall.sh")
+        if return_value != 0:
+            return jsonify({"status": "error", "message": "gNB MDE uninstallation failed"}), 500
+        else:
+            return jsonify({"status": "success", "message": "gNB MDE uninstalled"}), 200
+
+    def gnb_mde_check(self):
+        try:
+            # Run the command and capture output
+            result = subprocess.run(
+                [f"{WORKING_DIR}/../gnb_mde/check-mde.sh"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            return jsonify({"status": "success", "message": "gNB MDE test success", "output": result.stdout}), 200
+        except subprocess.CalledProcessError as e:
+            return jsonify({"status": "error", "message": "gNB MDE test failed", "output": e.stderr}), 500
 
     def kpi_computation_install(self):
         return_value = os.system(f"{WORKING_DIR}/../kpi_computation/install.sh")
