@@ -57,3 +57,16 @@ metrics:
     enabled: true
     namespace: monarch
     interval: 1s
+
+persistence:
+  enabled: false
+
+extraVolumes:
+  - name: thanos-data
+    hostPath:
+      path: /mnt/data/thanos
+      type: DirectoryOrCreate
+
+extraVolumeMounts:
+  - name: thanos-data
+    mountPath: /var/thanos/store

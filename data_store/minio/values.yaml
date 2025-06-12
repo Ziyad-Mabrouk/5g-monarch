@@ -13,8 +13,16 @@ mode: standalone
 
 replicas: 1
 persistence:
-  enabled: true
-  size: 5Gi
+  enabled: false
+
+extraVolumes:
+  - name: data
+    hostPath:
+      path: /mnt/data/minio
+      type: DirectoryOrCreate
+extraVolumeMounts:
+  - name: data
+    mountPath: /data
 
 resources:
   requests:
