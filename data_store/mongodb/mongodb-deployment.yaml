@@ -73,8 +73,8 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /bitnami/mongodb/data/db/
-  volumes:
-    - name: datadir
-      hostPath:
-        path: /mnt/data/mongodb
-        type: DirectoryOrCreate
+      volumes:
+        - name: datadir
+          hostPath:
+            path: /mnt/data/mongodb
+            type: DirectoryOrCreate
