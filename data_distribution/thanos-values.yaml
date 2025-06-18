@@ -59,7 +59,7 @@ metrics:
     interval: 1s
 
 persistence:
-  enabled: false
+  enabled: true
 
 extraVolumes:
   - name: thanos-data
