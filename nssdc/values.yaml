@@ -69,13 +69,16 @@ prometheus:
             action: keep
             regex: true
 
+    storageSpec:
+      volumeClaimTemplate: {}
+
     additionalVolumes:
-      - name: prom-data
+      - name: prometheus-nssdc-prometheus-db
         hostPath:
           path: /mnt/data/prometheus
           type: DirectoryOrCreate
     additionalVolumeMounts:
-      - name: prom-data
+      - name: prometheus-nssdc-prometheus-db
         mountPath: /prometheus
 
  # turn OFF the built‑in PVC
