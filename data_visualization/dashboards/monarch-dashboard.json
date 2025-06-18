@@ -409,32 +409,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "Round A - 0d38"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -595,7 +570,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "dlsch_errors_ue={{rnti}}",
+          "legendFormat": "ulsch_errors_ue={{rnti}}",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -707,7 +682,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
-          "legendFormat": "dl_mcs_ue_rnti={{rnti}}",
+          "legendFormat": "ul_mcs_ue_rnti={{rnti}}",
           "range": true,
           "refId": "B",
           "useBackend": false
