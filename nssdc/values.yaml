@@ -49,30 +49,42 @@ prometheus:
 
     retention: 5d
 
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          volumeName: prometheus-hostpath
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+          storageClassName: ""
+          selector: {}
+
+    volumes:
+      - name: prometheus-hostpath
+        hostPath:
+          path: /mnt/data/prometheus
+          type: DirectoryOrCreate
+
+    volumeMounts:
+      - name: prometheus-hostpath
+        mountPath: /prometheus
+
     thanos:
       image: quay.io/thanos/thanos:v0.31.0
       objectStorageConfig:
         key: thanos.yaml
         name: thanos-objstore-config
 
-    # additionalScrapeConfigsSecret:
-    #   enabled: true
-    #   name: additional-scrape-configs
-    #   key: additional-scrape-configs.yaml
-
-    additionalArgs:
-      - --storage.tsdb.min-block-duration=15m
-      - --storage.tsdb.max-block-duration=15m
-    
     additionalScrapeConfigs:
       - job_name: "monarch-service"
-        scrape_interval: "${MONARCH_MONITORING_INTERVAL}" # use dynamic value instead of hard-coded one
+        scrape_interval: "${MONARCH_MONITORING_INTERVAL}"
         kubernetes_sd_configs:
           - role: service
             namespaces:
               names:
-              - 'open5gs'
-              - 'monarch'
+                - 'open5gs'
+                - 'monarch'
         relabel_configs:
           - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
             action: keep
