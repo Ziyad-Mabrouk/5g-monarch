@@ -49,27 +49,6 @@ prometheus:
 
     retention: 5d
 
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          volumeName: prometheus-hostpath
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 10Gi
-          storageClassName: ""
-          selector: {}
-
-    volumes:
-      - name: prometheus-hostpath
-        hostPath:
-          path: /mnt/data/prometheus
-          type: DirectoryOrCreate
-
-    volumeMounts:
-      - name: prometheus-hostpath
-        mountPath: /prometheus
-
     thanos:
       image: quay.io/thanos/thanos:v0.31.0
       objectStorageConfig:
@@ -90,41 +69,8 @@ prometheus:
             action: keep
             regex: true
 
-nodeExporter:
-  enabled: false
-
-kubeStateMetrics:
-  enabled: true
-
-kubeApiServer:
-  enabled: false
-
-coreDns:
-  enabled: false
-
-kubeControllerManager:
-  enabled: false
-
-kubeEtcd:
-  enabled: false
-
-kubeProxy:
-  enabled: false
-
-kubeScheduler:
-  enabled: false
-
-kubelet:
-  enabled: true
-
-prometheusOperator:
-  kubeletService:
+  persistence:
     enabled: true
-
-prometheus-node-exporter:
-  prometheus:
-    monitor:
-      enabled: true
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_endpoint_node_name]
-          targetLabel: node
+    size: 10Gi
+    storageClass: ""
+    path: /prometheus
