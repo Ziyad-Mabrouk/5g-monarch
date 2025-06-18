@@ -73,4 +73,3 @@ prometheus:
     enabled: true
     size: 10Gi
     storageClass: ""
-    path: /prometheus
