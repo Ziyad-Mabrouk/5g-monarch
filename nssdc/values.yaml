@@ -78,7 +78,6 @@ prometheus:
       - name: prom-data
         mountPath: /prometheus
 
+ # turn OFF the built‑in PVC
   persistence:
-    enabled: true
-    size: 10Gi
-    storageClass: ""
+    enabled: false
