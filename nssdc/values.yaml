@@ -69,8 +69,16 @@ prometheus:
             action: keep
             regex: true
 
+    additionalVolumes:
+      - name: prom-data
+        hostPath:
+          path: /mnt/data/prometheus
+          type: DirectoryOrCreate
+    additionalVolumeMounts:
+      - name: prom-data
+        mountPath: /prometheus
+
   persistence:
     enabled: true
     size: 10Gi
     storageClass: ""
-    existingClaim: prometheus-nssdc-prometheus-pvc
