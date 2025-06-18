@@ -59,6 +59,10 @@ prometheus:
     #   enabled: true
     #   name: additional-scrape-configs
     #   key: additional-scrape-configs.yaml
+
+    additionalArgs:
+      - --storage.tsdb.min-block-duration=15m
+      - --storage.tsdb.max-block-duration=15m
     
     additionalScrapeConfigs:
       - job_name: "monarch-service"

@@ -13,13 +13,14 @@ mode: standalone
 
 replicas: 1
 persistence:
-  enabled: false
+  enabled: true
 
 extraVolumes:
   - name: data
     hostPath:
       path: /mnt/data/minio
       type: DirectoryOrCreate
+
 extraVolumeMounts:
   - name: data
     mountPath: /data
