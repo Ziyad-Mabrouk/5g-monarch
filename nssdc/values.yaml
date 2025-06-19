@@ -89,10 +89,3 @@ prometheus:
             action: keep
             regex: true
 
-    additionalArgs:
-      - name: storage.tsdb.wal-compression
-        value: ""
-      - name: storage.tsdb.min-block-duration
-        value: 1m
-      - name: storage.tsdb.max-block-duration
-        value: 2m
