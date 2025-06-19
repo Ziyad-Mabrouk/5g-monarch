@@ -69,18 +69,10 @@ prometheus:
             action: keep
             regex: true
 
-    storageSpec:
-      volumeClaimTemplate: {}
+    minBlockDuration: 1m
+    maxBlockDuration: 2m
 
-    additionalVolumes:
-      - name: prometheus-nssdc-prometheus-db
-        hostPath:
-          path: /mnt/data/prometheus
-          type: DirectoryOrCreate
-    additionalVolumeMounts:
-      - name: prometheus-nssdc-prometheus-db
-        mountPath: /prometheus
-
- # turn OFF the built‑in PVC
-  persistence:
-    enabled: false
+    additionalArgs:
+      - --storage.tsdb.wal-compression
+      - --storage.tsdb.min-block-duration=1m
+      - --storage.tsdb.max-block-duration=2m
