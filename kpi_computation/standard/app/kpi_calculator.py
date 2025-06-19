@@ -62,8 +62,8 @@ def get_slice_throughput_per_seid_and_direction(snssai, direction):
     throughput_per_seid = {}  # {seid: value (bits/sec)}
 
     direction_mapping = {
-        "uplink": "outdatavolumen3upf",
-        "downlink": "indatavolumen3upf"
+        "uplink": "indatavolumen3upf",
+        "downlink": "outdatavolumen3upf"
     }
 
     if direction not in direction_mapping:
@@ -89,9 +89,9 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     Uses Prometheus metrics: oai_gnb_mac_tx_bytes or oai_gnb_mac_rx_bytes
     Returns a dictionary of the form {rnti: value (bits/sec)}
     """
-    if direction == "uplink":
+    if direction == "downlink":
         metric = "oai_gnb_mac_tx_bytes"
-    elif direction == "downlink":
+    elif direction == "uplink":
         metric = "oai_gnb_mac_rx_bytes"
     else:
         log.warning(f"Invalid MAC direction: {direction}")
