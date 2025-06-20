@@ -16,14 +16,14 @@ persistence:
   enabled: true
 
 extraVolumes:
-  - name: data
+  - name: export
     hostPath:
       path: /mnt/data/minio
       type: DirectoryOrCreate
 
 extraVolumeMounts:
-  - name: data
-    mountPath: /data
+  - name: export
+    mountPath: /export
 
 resources:
   requests:
