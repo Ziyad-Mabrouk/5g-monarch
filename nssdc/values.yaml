@@ -25,11 +25,6 @@ prometheus:
       - name: prometheus-data
         mountPath: /prometheus
 
-    extraArgs:
-      - --storage.tsdb.wal-compression
-      - --storage.tsdb.min-block-duration=1m
-      - --storage.tsdb.max-block-duration=2m
-
   thanosService:
     enabled: false
 
@@ -59,7 +54,10 @@ prometheus:
 
     additionalArgs:
     - name: web.enable-admin-api
-      value: "true"
+    - name: storage.tsdb.min-block-duration
+      value: 1m
+    - name: storage.tsdb.max-block-duration
+      value: 5m
 
     scrapeInterval: "${MONARCH_MONITORING_INTERVAL}"
     serviceMonitorSelectorNilUsesHelmValues: false
