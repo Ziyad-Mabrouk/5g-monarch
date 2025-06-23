@@ -55,9 +55,9 @@ prometheus:
     additionalArgs:
     - name: web.enable-admin-api
     - name: storage.tsdb.min-block-duration
-      value: 1m
-    - name: storage.tsdb.max-block-duration
       value: 5m
+    - name: storage.tsdb.max-block-duration
+      value: 10m
 
     scrapeInterval: "${MONARCH_MONITORING_INTERVAL}"
     serviceMonitorSelectorNilUsesHelmValues: false
@@ -77,8 +77,6 @@ prometheus:
       objectStorageConfig:
         key: thanos.yaml
         name: thanos-objstore-config
-      extraArgs:
-      - --ship-interval=1m
 
     additionalScrapeConfigs:
       - job_name: "monarch-service"
