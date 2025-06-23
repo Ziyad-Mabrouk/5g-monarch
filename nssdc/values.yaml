@@ -57,6 +57,9 @@ prometheus:
 
     enableRemoteWriteReceiver: true
 
+    additionalArgs:
+    - --web.enable-admin-api
+
     scrapeInterval: "${MONARCH_MONITORING_INTERVAL}"
     serviceMonitorSelectorNilUsesHelmValues: false
 
