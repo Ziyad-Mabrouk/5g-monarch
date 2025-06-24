@@ -131,10 +131,10 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     # match RNTIs and compute throughput manually
     throughput_per_rnti = {}
     for result in end_data:
-        rnti = result["metric"].get("rnti")
+        rnti = result["metric"]["rnti"]
         end_value = float(result["value"][1])
         start_value = next(
-            (float(r["value"][1]) for r in start_data if r["metric"].get("rnti") == rnti), None
+            (float(r["value"][1]) for r in start_data if r["metric"]["rnti"] == rnti), None
         )
         if start_value is not None:
             delta_bytes = end_value - start_value
@@ -153,7 +153,7 @@ def get_number_ues():
         return 0
 
     for result in results:
-        rnti = result["metric"].get("rnti")
+        rnti = result["metric"]["rnti"]
         log.debug(f"Found RNTI: {rnti}")
         if rnti:
             rntis.add(rnti)
@@ -175,7 +175,7 @@ def get_saturation_percentage():
             try:
                 val = float(result["value"][1])
                 total_nprb += val
-                log.debug(f"NPRB for {result['metric'].get('rnti')}: {val}")
+                log.debug(f"NPRB for {result['metric']["rnti"]}: {val}")
             except (KeyError, ValueError) as e:
                 log.warning(f"Failed to parse NPRB result: {e}")
     else:
