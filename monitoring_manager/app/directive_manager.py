@@ -180,7 +180,6 @@ class DirectiveManager:
             self.logger.info("Both gNB MDE and KPI Computation uninstalled successfully.")
             return self._create_success_response(action="deleted")
 
-
     def _create_success_response(self, action="installed"):
         response = Response()
         response.status_code = 200
