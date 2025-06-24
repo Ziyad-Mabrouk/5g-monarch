@@ -175,7 +175,8 @@ def get_saturation_percentage():
             try:
                 val = float(result["value"][1])
                 total_nprb += val
-                log.debug(f"NPRB for {result['metric']["rnti"]}: {val}")
+                rnti = result["metric"]["rnti"]
+                log.debug(f"NPRB for {rnti}: {val}")
             except (KeyError, ValueError) as e:
                 log.warning(f"Failed to parse NPRB result: {e}")
     else:
