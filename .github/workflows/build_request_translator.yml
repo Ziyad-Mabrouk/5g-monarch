@@ -4,7 +4,7 @@ on:
   push:
     branches: [ test ]
     paths:
-      - 'request_translator/'
+      - 'request_translator/**'
   workflow_dispatch:
 
 env:

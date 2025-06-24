@@ -104,6 +104,7 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     # log.debug(query)
     # params = {'query': query}
     # results = query_prometheus(params, MONARCH_THANOS_URL)
+
     # throughput_per_rnti = {}
     # if results:
     #     for result in results:

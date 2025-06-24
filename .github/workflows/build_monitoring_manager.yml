@@ -4,7 +4,7 @@ on:
   push:
     branches: [ test ]
     paths:
-      - 'monitoring_manager/'
+      - 'monitoring_manager/**'
   workflow_dispatch:
 
 env:

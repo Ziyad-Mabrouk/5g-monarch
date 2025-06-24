@@ -138,7 +138,7 @@ class TranslationManager:
     
     def translate_saturation_percentage(self, request):
         """
-        Translates a PRB Saturaion Percentage request into metrics from gNB to monitor.
+        Translates a PRB Saturaion percentage request into metrics from gNB to monitor.
         """
         self.logger.info("Translating PRB Saturaion percentage request...")
 
