@@ -3,8 +3,8 @@ name: Build & Push 5G-Monarch Monioring Manager image
 on:
   push:
     branches: [ test ]
-    paths:
-      - 'monitoring_manager/**'
+    # paths:
+    #   - 'monitoring_manager/**'
   workflow_dispatch:
 
 env:
@@ -13,7 +13,7 @@ env:
 
 jobs:
 
-  build-and-push:
+  build-and-push-monitoring-manager:
     runs-on: ubuntu-22.04
 
     steps:
@@ -25,7 +25,7 @@ jobs:
 
     - name: Build monitoring-manager
       run: |
-        docker build --tag monitoring-manager:${{ env.TAG }} -f monitoring_manager/Dockerfile .
+        docker build --tag monitoring-manager:${{ env.TAG }} -f monitoring_manager/Dockerfile ./monitoring_manager
 
     - name: Tag and push to GHCR
       run: |

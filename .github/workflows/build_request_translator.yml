@@ -3,8 +3,8 @@ name: Build & Push 5G-Monarch Request Translator image
 on:
   push:
     branches: [ test ]
-    paths:
-      - 'request_translator/**'
+    # paths:
+    #   - 'request_translator/**'
   workflow_dispatch:
 
 env:
@@ -13,7 +13,7 @@ env:
 
 jobs:
 
-  build-and-push:
+  build-and-push-request-translator:
     runs-on: ubuntu-22.04
 
     steps:
@@ -25,7 +25,7 @@ jobs:
 
     - name: Build request-translator
       run: |
-        docker build --tag request-translator:${{ env.TAG }} -f request_translator/Dockerfile .
+        docker build --tag request-translator:${{ env.TAG }} -f request_translator/Dockerfile ./request_translator
 
     - name: Tag and push to GHCR
       run: |
