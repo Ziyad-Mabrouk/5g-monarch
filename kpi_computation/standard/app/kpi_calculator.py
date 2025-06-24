@@ -114,7 +114,8 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     #             throughput_per_rnti[rnti] = value
     # return throughput_per_rnti
 
-    end_time = datetime.now(datetime.timezone.utc)
+    utc = timezone.utc
+    end_time = datetime.now(utc)
     start_time = end_time - timedelta(seconds=5)
 
     end_data = query_prometheus({
