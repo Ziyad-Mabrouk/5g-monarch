@@ -1,0 +1,38 @@
+name: Build & Push 5G-Monarch Request Translator image
+
+on:
+  push:
+    branches: [ test ]
+    paths:
+      - 'request_translator/'
+  workflow_dispatch:
+
+env:
+  GHCR_USER: ziyad-mabrouk
+  TAG: v1.0.0
+
+jobs:
+
+  build-and-push:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Log in to GHCR
+      run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ env.GHCR_USER }}" --password-stdin
+
+    - name: Build request-translator
+      run: |
+        docker build --tag request-translator:${{ env.TAG }} -f request_translator/Dockerfile .
+
+    - name: Tag and push to GHCR
+      run: |
+        IMAGE_URI=ghcr.io/${{ env.GHCR_USER }}/request-translator:${{ env.TAG }}
+        docker tag request-translator:${{ env.TAG }} "$IMAGE_URI"
+        docker push "$IMAGE_URI"
+
+    - name: Log out of GHCR
+      if: always()
+      run: docker logout ghcr.io
