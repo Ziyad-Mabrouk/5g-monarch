@@ -11,5 +11,19 @@
         "kpi_description": "MAC throughput per UE RNTI",
         "kpi_unit": "bits/sec",
         "kpi_prom_metric_name": "mac_throughput"
+    },
+
+    {
+        "kpi_name": "number_ues",
+        "kpi_description": "Number of connected UEs in the gNB",
+        "kpi_unit": "integer",
+        "kpi_prom_metric_name": "number_ues"
+    },
+
+    {
+        "kpi_name": "saturation_percentage",
+        "kpi_description": "Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)",
+        "kpi_unit": "percentage",
+        "kpi_prom_metric_name": "saturation_percentage"
     }
 ]
