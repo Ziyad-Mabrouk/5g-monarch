@@ -7,7 +7,7 @@
 Prometheus exporter which exports slice throughput KPI.
 For use with the 5G-MONARCH project and Open5GS.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 import logging
 import time
