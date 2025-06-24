@@ -3,8 +3,8 @@ name: Build & Push 5G-Monarch KPI Calculator image
 on:
   push:
     branches: [ test ]
-    # paths:
-    #   - 'kpi_computation/standard/**'
+    paths:
+      - 'kpi_computation/standard/**'
   workflow_dispatch:
 
 env:

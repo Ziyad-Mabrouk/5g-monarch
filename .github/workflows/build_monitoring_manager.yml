@@ -3,8 +3,8 @@ name: Build & Push 5G-Monarch Monioring Manager image
 on:
   push:
     branches: [ test ]
-    # paths:
-    #   - 'monitoring_manager/**'
+    paths:
+      - 'monitoring_manager/**'
   workflow_dispatch:
 
 env:

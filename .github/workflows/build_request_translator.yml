@@ -3,8 +3,8 @@ name: Build & Push 5G-Monarch Request Translator image
 on:
   push:
     branches: [ test ]
-    # paths:
-    #   - 'request_translator/**'
+    paths:
+      - 'request_translator/**'
   workflow_dispatch:
 
 env:

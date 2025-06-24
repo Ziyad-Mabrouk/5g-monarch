@@ -7,7 +7,7 @@
 Prometheus exporter which exports slice throughput KPI.
 For use with the 5G-MONARCH project and Open5GS.
 """
-import datetime
+from datetime import datetime, timedelta
 import os
 import logging
 import time
@@ -114,8 +114,8 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     #             throughput_per_rnti[rnti] = value
     # return throughput_per_rnti
 
-    end_time = datetime.utcnow()
-    start_time = end_time - datetime.timedelta(seconds=5)
+    end_time = datetime.now(datetime.timezone.utc)
+    start_time = end_time - timedelta(seconds=5)
 
     end_data = query_prometheus({
         "query": f"{metric}",
@@ -142,59 +142,62 @@ def get_mac_throughput_per_rnti_and_direction(direction):
     return throughput_per_rnti 
    
 def get_number_ues():
-    """
-    Count the number of unique RNTIs (UEs) appearing in oai_gnb_mac_tx_bytes.
-    Returns the number of connected UEs.
-    """
     rntis = set()
 
-    metric="oai_gnb_mac_tx_bytes"
-    query = f'{metric}'
-    params = {'query': query}
-    results = query_prometheus(params, MONARCH_THANOS_URL)
+    metric = "oai_gnb_mac_tx_bytes"
+    results = query_prometheus({'query': metric}, MONARCH_THANOS_URL)
 
-    if results:
-        for result in results:
-            rnti = result["metric"].get("rnti")
-            if rnti:
-                rntis.add(rnti)
+    if not results:
+        log.warning("No results from oai_gnb_mac_tx_bytes for number_ues")
+        return 0
 
-    return len(rntis)
+    for result in results:
+        rnti = result["metric"].get("rnti")
+        log.debug(f"Found RNTI: {rnti}")
+        if rnti:
+            rntis.add(rnti)
+
+    count = len(rntis)
+    log.info(f"Found {count} unique RNTIs for number_ues")
+    return count
 
 def get_saturation_percentage():
     """
     Compute gNB PRB saturation: (sum of mac_nprb per UE) / (total PRBs from L1 stats) * 100
     """
-
     mac_nprb_query = "oai_gnb_mac_nprb"
     nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
-    
-    total_nprb = 0
+
+    total_nprb = 0.0
     if nprb_results:
         for result in nprb_results:
             try:
-                total_nprb += float(result["value"][1])
-            except (KeyError, ValueError):
-                continue
+                val = float(result["value"][1])
+                total_nprb += val
+                log.debug(f"NPRB for {result['metric'].get('rnti')}: {val}")
+            except (KeyError, ValueError) as e:
+                log.warning(f"Failed to parse NPRB result: {e}")
+    else:
+        log.warning("No results for oai_gnb_mac_nprb")
 
-    l1_total_prbs_query = "oai_gnb_l1_total_prbs"
-    l1_result = query_prometheus({"query": l1_total_prbs_query}, MONARCH_THANOS_URL)
-    
-    if not l1_result or "value" not in l1_result[0]:
-        log.warning("Could not find oai_gnb_l1_total_prbs")
+    l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
+    if not l1_result:
+        log.warning("No results for oai_gnb_l1_total_prbs")
         return
-    
+
     try:
         total_prbs = float(l1_result[0]["value"][1])
-    except (IndexError, KeyError, ValueError):
-        log.warning("Invalid total PRBs value")
+        log.debug(f"Total PRBs from L1: {total_prbs}")
+    except (IndexError, KeyError, ValueError) as e:
+        log.warning(f"Error parsing total PRBs: {e}")
         return
 
     if total_prbs == 0:
-        log.warning("Total PRBs is zero, avoiding division by zero")
+        log.warning("Total PRBs is zero, cannot divide!")
         return
 
     saturation_percentage = (total_nprb / total_prbs) * 100
+    log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Total NPRBs={total_nprb}, Total PRBs={total_prbs})")
     return saturation_percentage
 
 def get_active_snssais():
