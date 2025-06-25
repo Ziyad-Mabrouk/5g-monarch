@@ -116,20 +116,21 @@ def get_mac_throughput_per_rnti_and_direction(direction):
 
     utc = timezone.utc
     end_time = datetime.now(utc)
-    start_time = end_time - timedelta(seconds=5)
+    start_time = end_time - timedelta(seconds=int(TIME_RANGE[:-1]))
 
     end_data = query_prometheus({
         "query": f"{metric}",
-        "time": end_time.isoformat() + "Z"
+        "time": end_time.replace(tzinfo=None).timestamp()
     }, MONARCH_THANOS_URL)
 
     start_data = query_prometheus({
         "query": f"{metric}",
-        "time": start_time.isoformat() + "Z"
+        "time": start_time.replace(tzinfo=None).timestamp()
     }, MONARCH_THANOS_URL)
 
     # match RNTIs and compute throughput manually
     throughput_per_rnti = {}
+
     for result in end_data:
         rnti = result["metric"]["rnti"]
         end_value = float(result["value"][1])
@@ -138,7 +139,7 @@ def get_mac_throughput_per_rnti_and_direction(direction):
         )
         if start_value is not None:
             delta_bytes = end_value - start_value
-            bits_per_sec = (delta_bytes * 8) / 5  # seconds
+            bits_per_sec = (delta_bytes * 8) / int(TIME_RANGE[:-1])  # seconds
             throughput_per_rnti[rnti] = bits_per_sec
     return throughput_per_rnti 
    
