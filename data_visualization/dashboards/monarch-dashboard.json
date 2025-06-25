@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -49,6 +49,9 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -78,13 +81,13 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 19,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 0
       },
@@ -106,10 +109,10 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{container=\"gnb\"}[1m])",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{container=\"gnb\"}[1m]))/sum(machine_cpu_cores))*100",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "__auto",
+          "legendFormat": "gnb",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -120,10 +123,10 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{container=\"upf\"}[1m])",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"open5gs-upf1-.*\"}[1m]))/sum(machine_cpu_cores))*100",
           "hide": false,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "upf1",
           "range": true,
           "refId": "B"
         },
@@ -133,15 +136,193 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{container=\"nr-ue\"}[1m])",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"open5gs-upf2-.*\"}[1m]))/sum(machine_cpu_cores))*100",
           "hide": false,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "upf2",
           "range": true,
           "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"oai-nr-ue-.*\"}[1m]))/sum(machine_cpu_cores))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"oai-nr-ue2-.*\"}[1m]))/sum(machine_cpu_cores))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue2",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "CPU Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{container=\"gnb\"}[1m]))/sum(machine_memory_bytes))*100",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "gnb",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"open5gs-upf1-.*\"}[1m]))/sum(machine_memory_bytes))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "upf1",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"open5gs-upf2-.*\"}[1m]))/sum(machine_memory_bytes))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "upf2",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"oai-nr-ue-.*\"}[1m]))/sum(machine_memory_bytes))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"oai-nr-ue2-.*\"}[1m]))/sum(machine_memory_bytes))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue2",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Memory Usage",
       "type": "timeseries"
     },
     {
@@ -150,7 +331,425 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 8
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Slice 1 (SNSSAI = 1-0xFFFFFF)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1\"}",
+          "instant": false,
+          "legendFormat": "seid={{seid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Downlink Slice Throughput at UPF (Slice 1)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1\"}",
+          "instant": false,
+          "legendFormat": "seid={{seid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uplink Slice Throughput at UPF (Slice 1)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 7,
+      "panels": [],
+      "title": "Slice 2 (SNSSAI = 2-000001)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1-000001\"}",
+          "instant": false,
+          "legendFormat": "seid={{seid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Downlink Slice Throughput at UPF (Slice 2)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1-000001\"}",
+          "instant": false,
+          "legendFormat": "seid={{seid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uplink Slice Throughput at UPF (Slice 2)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
       },
       "id": 15,
       "panels": [],
@@ -214,7 +813,7 @@
               }
             ]
           },
-          "unit": "Mbits"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -222,7 +821,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 27
       },
       "id": 12,
       "options": {
@@ -312,7 +911,7 @@
               }
             ]
           },
-          "unit": "Mbits"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -320,7 +919,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 27
       },
       "id": 14,
       "options": {
@@ -417,7 +1016,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 35
       },
       "id": 1,
       "interval": "1s",
@@ -538,7 +1137,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 35
       },
       "id": 20,
       "options": {
@@ -653,7 +1252,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 43
       },
       "id": 21,
       "options": {
@@ -766,7 +1365,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 43
       },
       "id": 16,
       "options": {
@@ -879,7 +1478,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 51
       },
       "id": 13,
       "options": {
@@ -992,7 +1591,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 51
       },
       "id": 18,
       "options": {
@@ -1026,23 +1625,11 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 52
-      },
-      "id": 6,
-      "panels": [],
-      "title": "Slice 1 (SNSSAI = 1-0xFFFFFF)",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "monarch-thanos"
       },
+      "description": "PRACH I0 (dB) represents the estimated interference and noise power level on the Physical Random Access Channel (PRACH) as measured by the gNB. It reflects the background energy in the PRACH resources, impacting the gNB's ability to detect random access preambles from UEs. A lower I0 value indicates a cleaner channel with less interference, improving the chances of successful UE access attempts, while a higher I0 suggests a noisy or congested environment that may hinder initial access. Monitoring this metric helps assess PRACH quality and network accessibility under varying load and interference conditions.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1066,7 +1653,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1095,7 +1682,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "dB"
         },
         "overrides": []
       },
@@ -1103,15 +1690,15 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 59
       },
-      "id": 2,
+      "id": 25,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -1121,19 +1708,18 @@
       "pluginVersion": "11.3.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "monarch-thanos"
-          },
+          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1\"}",
-          "instant": false,
-          "legendFormat": "seid={{seid}}",
+          "expr": "oai_gnb_l1_prach_i0_db",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "__auto",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
-      "title": "Downlink Slice Throughput at UPF (Slice 1)",
+      "title": "PRACH I0",
       "type": "timeseries"
     },
     {
@@ -1144,40 +1730,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
@@ -1192,60 +1745,50 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "Bps"
+          }
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 5,
         "x": 12,
-        "y": 53
+        "y": 59
       },
-      "id": 4,
+      "id": 23,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.3.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "monarch-thanos"
-          },
-          "editorMode": "code",
-          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1\"}",
-          "instant": false,
-          "legendFormat": "seid={{seid}}",
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "number_ues",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "__auto",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
-      "title": "Uplink Slice Throughput at UPF (Slice 1)",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 61
-      },
-      "id": 7,
-      "panels": [],
-      "title": "Slice 2 (SNSSAI = 2-000001)",
-      "type": "row"
+      "title": "Number of Connected UEs",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -1255,40 +1798,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic-by-name"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
@@ -1304,144 +1814,48 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 62
+        "w": 7,
+        "x": 17,
+        "y": 59
       },
-      "id": 5,
+      "id": 24,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
       "pluginVersion": "11.3.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "monarch-thanos"
-          },
-          "editorMode": "code",
-          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1-000001\"}",
-          "instant": false,
-          "legendFormat": "seid={{seid}}",
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "saturation_percentage",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "__auto",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
-      "title": "Downlink Slice Throughput at UPF (Slice 2)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "monarch-thanos"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic-by-name"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 62
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "monarch-thanos"
-          },
-          "editorMode": "code",
-          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1-000001\"}",
-          "instant": false,
-          "legendFormat": "seid={{seid}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Uplink Slice Throughput at UPF (Slice 2)",
-      "type": "timeseries"
+      "title": "gNB PRB Stauration",
+      "type": "gauge"
     }
   ],
   "preload": false,
