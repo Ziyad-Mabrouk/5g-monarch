@@ -153,14 +153,20 @@ def get_number_ues():
         log.warning("No results from oai_gnb_mac_tx_bytes for number_ues")
         return 0
 
+    # Extract the latest timestamp from the results
+    latest_ts = max(float(r["value"][0]) for r in results if "value" in r)
+    log.debug(f"Latest timestamp: {latest_ts}")
+
+    # Only consider results from the latest timestamp
     for result in results:
-        rnti = result["metric"]["rnti"]
-        log.debug(f"Found RNTI: {rnti}")
-        if rnti:
-            rntis.add(rnti)
+        if float(result["value"][0]) == latest_ts:
+            rnti = result["metric"].get("rnti")
+            log.debug(f"Found RNTI at latest timestamp: {rnti}")
+            if rnti:
+                rntis.add(rnti)
 
     count = len(rntis)
-    log.info(f"Found {count} unique RNTIs for number_ues")
+    log.info(f"Found {count} unique RNTIs at latest timestamp for number_ues")
     return count
 
 def get_saturation_percentage():
