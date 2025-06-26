@@ -145,28 +145,24 @@ def get_mac_throughput_per_rnti_and_direction(direction):
    
 def get_number_ues():
     rntis = set()
-
     metric = "oai_gnb_mac_tx_bytes"
-    results = query_prometheus({'query': metric}, MONARCH_THANOS_URL)
+    
+    query = f'rate({metric}[{TIME_RANGE}])'
+    results = query_prometheus({'query': query}, MONARCH_THANOS_URL)
 
     if not results:
-        log.warning("No results from oai_gnb_mac_tx_bytes for number_ues")
+        log.warning("No rate results from oai_gnb_mac_tx_bytes for number_ues")
         return 0
 
-    # Extract the latest timestamp from the results
-    latest_ts = max(float(r["value"][0]) for r in results if "value" in r)
-    log.debug(f"Latest timestamp: {latest_ts}")
-
-    # Only consider results from the latest timestamp
     for result in results:
-        if float(result["value"][0]) == latest_ts:
-            rnti = result["metric"].get("rnti")
-            log.debug(f"Found RNTI at latest timestamp: {rnti}")
-            if rnti:
-                rntis.add(rnti)
+        rnti = result["metric"].get("rnti")
+        value = float(result["value"][1])
+        log.debug(f"RNTI: {rnti}, rate: {value}")
+        if rnti and value > 0:
+            rntis.add(rnti)
 
     count = len(rntis)
-    log.info(f"Found {count} unique RNTIs at latest timestamp for number_ues")
+    log.info(f"Found {count} active RNTIs (non-zero tx rate) for number_ues")
     return count
 
 def get_saturation_percentage():
