@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -395,7 +395,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -493,7 +493,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -604,7 +604,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -702,7 +702,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "bps"
         },
         "overrides": []
       },
@@ -840,8 +840,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "mac_throughput{direction=\"downlink\"}",
+          "editorMode": "code",
+          "expr": "mac_throughput{direction=\"downlink\"} > 0",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "interval": "",
@@ -938,8 +938,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "mac_throughput{direction=\"uplink\"}",
+          "editorMode": "code",
+          "expr": "mac_throughput{direction=\"uplink\"} > 0",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "ue_rnti={{rnti}}",

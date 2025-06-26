@@ -167,8 +167,24 @@ def get_number_ues():
 
 def get_saturation_percentage():
     """
-    Compute gNB PRB saturation: (sum of mac_nprb per UE) / (total PRBs from L1 stats) * 100
+    Compute gNB PRB saturation only for UEs with active traffic:
+    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
     """
+
+    tx_bytes_query = 'rate(oai_gnb_mac_tx_bytes[1s]) > 0'
+    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
+
+    active_rntis = set()
+    if tx_results:
+        for result in tx_results:
+            try:
+                rnti = result["metric"]["rnti"]
+                active_rntis.add(rnti)
+            except KeyError:
+                log.warning("Missing 'rnti' in tx_bytes result")
+    else:
+        log.warning("No active RNTIs found from tx_bytes rate")
+
     mac_nprb_query = "oai_gnb_mac_nprb"
     nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
 
@@ -176,10 +192,11 @@ def get_saturation_percentage():
     if nprb_results:
         for result in nprb_results:
             try:
-                val = float(result["value"][1])
-                total_nprb += val
                 rnti = result["metric"]["rnti"]
-                log.debug(f"NPRB for {rnti}: {val}")
+                if rnti in active_rntis:
+                    val = float(result["value"][1])
+                    total_nprb += val
+                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
             except (KeyError, ValueError) as e:
                 log.warning(f"Failed to parse NPRB result: {e}")
     else:
@@ -201,8 +218,9 @@ def get_saturation_percentage():
         log.warning("Total PRBs is zero, cannot divide!")
         return
 
+    # Step 4: Compute saturation percentage
     saturation_percentage = (total_nprb / total_prbs) * 100
-    log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Total NPRBs={total_nprb}, Total PRBs={total_prbs})")
+    log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Active NPRBs={total_nprb}, Total PRBs={total_prbs})")
     return saturation_percentage
 
 def get_active_snssais():
