@@ -170,21 +170,21 @@ def get_saturation_percentage():
     Compute gNB PRB saturation only for UEs with active traffic:
     (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
     """
-
-    tx_bytes_query = 'rate(oai_gnb_mac_tx_bytes[1s]) > 0'
+    active_rntis = set()
+    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
     tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
 
-    active_rntis = set()
+    
     if tx_results:
         for result in tx_results:
-            try:
-                rnti = result["metric"]["rnti"]
+            rnti = result["metric"].get("rnti")
+            value = float(result["value"][1])
+            if rnti and value > 0:
                 active_rntis.add(rnti)
-            except KeyError:
-                log.warning("Missing 'rnti' in tx_bytes result")
     else:
         log.warning("No active RNTIs found from tx_bytes rate")
 
+    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
     mac_nprb_query = "oai_gnb_mac_nprb"
     nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
 
@@ -218,7 +218,6 @@ def get_saturation_percentage():
         log.warning("Total PRBs is zero, cannot divide!")
         return
 
-    # Step 4: Compute saturation percentage
     saturation_percentage = (total_nprb / total_prbs) * 100
     log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Active NPRBs={total_nprb}, Total PRBs={total_prbs})")
     return saturation_percentage
