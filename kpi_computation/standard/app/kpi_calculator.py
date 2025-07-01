@@ -29,7 +29,7 @@ TIME_RANGE = os.getenv("TIME_RANGE", "5s")
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
 MAC_THROUGHPUT = prom.Gauge('mac_throughput', 'MAC throughput per UE RNTI (bits/sec)', ['rnti', 'direction'])
 NUMBER_UES = prom.Gauge('number_ues', 'Number of connected UEs in the gNB')
-SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)')
+SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)', ['rnti'])
 
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
@@ -222,6 +222,70 @@ def get_saturation_percentage():
     log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Active NPRBs={total_nprb}, Total PRBs={total_prbs})")
     return saturation_percentage
 
+def get_saturation_percentage_per_rnti():
+    """
+    Compute gNB PRB saturation only for UEs with active traffic:
+    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
+    Returns a dictionary of the form {rnti: value (percentage)}
+    """
+    active_rntis = set()
+    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
+    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
+
+    
+    if tx_results:
+        for result in tx_results:
+            rnti = result["metric"].get("rnti")
+            value = float(result["value"][1])
+            if rnti and value > 0:
+                active_rntis.add(rnti)
+    else:
+        log.warning("No active RNTIs found from tx_bytes rate")
+
+    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
+
+    l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
+    if not l1_result:
+        log.warning("No results for oai_gnb_l1_total_prbs")
+        return
+
+    try:
+        total_prbs = float(l1_result[0]["value"][1])
+        log.debug(f"Total PRBs from L1: {total_prbs}")
+    except (IndexError, KeyError, ValueError) as e:
+        log.warning(f"Error parsing total PRBs: {e}")
+        return
+
+    if total_prbs == 0:
+        log.warning("Total PRBs is zero, cannot divide!")
+        return
+
+    mac_nprb_query = "oai_gnb_mac_nprb"
+    nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
+
+    nprbs = {}
+    total_nprb = 0.0
+    if nprb_results:
+        for result in nprb_results:
+            try:
+                rnti = result["metric"]["rnti"]
+                if rnti in active_rntis:
+                    val = float(result["value"][1])
+                    total_nprb += val
+                    nprbs[rnti] = val
+                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
+            except (KeyError, ValueError) as e:
+                log.warning(f"Failed to parse NPRB result: {e}")
+    else:
+        log.warning("No results for oai_gnb_mac_nprb")
+
+    saturation_percentage_per_rnti = {}
+    for rnti, nprb in nprbs.items():
+        saturation_percentage_per_rnti[rnti] = (nprb / total_nprb) * 100
+        log.info(f"Computed Saturation = {saturation_percentage_per_rnti[rnti]:.2f}%")
+
+    return saturation_percentage_per_rnti
+
 def get_active_snssais():
     """
     Return a list of active SNSSAIs from the SMF.
@@ -267,9 +331,13 @@ def export_number_ues_to_prometheus(value):
     log.info(f"VALUE ={value}")
     NUMBER_UES.set(value)
 
-def export_saturation_percentage_to_prometheus(value):
-    log.info(f"VALUE ={value}")
-    SATURATION_PERCENTAGE.set(value)
+# def export_saturation_percentage_to_prometheus(value):
+#     log.info(f"VALUE ={value}")
+#     SATURATION_PERCENTAGE.set(value)
+
+def export_saturation_percentage_to_prometheus(rnti, value):
+    log.info(f"RNTI={rnti} | VALUE ={value}")
+    SATURATION_PERCENTAGE.labels(rnti=rnti).set(value)
 
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
@@ -293,8 +361,12 @@ def run_kpi_computation():
     number_ues = get_number_ues()
     export_number_ues_to_prometheus(number_ues)
 
-    saturation_percentage = get_saturation_percentage()
-    export_saturation_percentage_to_prometheus(saturation_percentage)
+    # saturation_percentage = get_saturation_percentage()
+    # export_saturation_percentage_to_prometheus(saturation_percentage)
+
+    saturation_percentage = get_saturation_percentage_per_rnti()
+    for rnti, value in saturation_percentage.items():
+        export_saturation_percentage_to_prometheus(rnti, value)
 
 
 if __name__ == "__main__":
