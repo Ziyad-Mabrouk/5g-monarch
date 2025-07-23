@@ -265,14 +265,12 @@ def get_saturation_percentage_per_rnti():
     nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
 
     nprbs = {}
-    total_nprb = 0.0
     if nprb_results:
         for result in nprb_results:
             try:
                 rnti = result["metric"]["rnti"]
                 if rnti in active_rntis:
                     val = float(result["value"][1])
-                    total_nprb += val
                     nprbs[rnti] = val
                     log.debug(f"NPRB for active RNTI {rnti}: {val}")
             except (KeyError, ValueError) as e:
@@ -282,7 +280,7 @@ def get_saturation_percentage_per_rnti():
 
     saturation_percentage_per_rnti = {}
     for rnti, nprb in nprbs.items():
-        saturation_percentage_per_rnti[rnti] = (nprb / total_nprb) * 100
+        saturation_percentage_per_rnti[rnti] = (nprb / total_prbs) * 100
         log.info(f"Computed Saturation = {saturation_percentage_per_rnti[rnti]:.2f}%")
 
     return saturation_percentage_per_rnti

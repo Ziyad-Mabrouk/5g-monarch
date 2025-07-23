@@ -122,6 +122,22 @@
             "type": "prometheus",
             "uid": "monarch-thanos"
           },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{container=\"metrics-parser\"}[1m]))/sum(machine_cpu_cores))*100",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "legendFormat": "metrics_parser",
+          "range": true,
+          "refId": "G",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
           "editorMode": "code",
           "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"open5gs-upf1-.*\"}[1m]))/sum(machine_cpu_cores))*100",
           "hide": false,
@@ -168,6 +184,19 @@
           "legendFormat": "nr_ue2",
           "range": true,
           "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{pod=~\"oai-nr-ue3-.*\"}[1m]))/sum(machine_cpu_cores))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue3",
+          "range": true,
+          "refId": "F"
         }
       ],
       "title": "CPU Usage",
@@ -299,6 +328,22 @@
             "type": "prometheus",
             "uid": "monarch-thanos"
           },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{container=\"metrics-parser\"}[1m]))/sum(machine_memory_bytes))*100",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "legendFormat": "metrics_parser",
+          "range": true,
+          "refId": "G",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
           "editorMode": "code",
           "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"open5gs-upf1-.*\"}[1m]))/sum(machine_memory_bytes))*100",
           "hide": false,
@@ -345,6 +390,19 @@
           "legendFormat": "nr_ue2",
           "range": true,
           "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(container_memory_usage_bytes{pod=~\"oai-nr-ue3-.*\"}[1m]))/sum(machine_memory_bytes))*100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nr_ue3",
+          "range": true,
+          "refId": "F"
         }
       ],
       "title": "Memory Usage",
@@ -831,7 +889,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 9,
+        "w": 12,
         "x": 0,
         "y": 14
       },
@@ -929,8 +987,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 9,
+        "w": 12,
+        "x": 12,
         "y": 14
       },
       "id": 14,
@@ -971,6 +1029,192 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 0,
+        "y": 21
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(mac_throughput{direction=\"downlink\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Downlink MAC Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 7,
+        "y": 21
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(mac_throughput{direction=\"uplink\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Uplink MAC Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
           "mappings": [],
@@ -993,8 +1237,8 @@
       "gridPos": {
         "h": 7,
         "w": 3,
-        "x": 17,
-        "y": 14
+        "x": 14,
+        "y": 21
       },
       "id": 23,
       "options": {
@@ -1061,9 +1305,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 14
+        "w": 7,
+        "x": 17,
+        "y": 21
       },
       "id": 24,
       "options": {
@@ -1095,7 +1339,7 @@
           "useBackend": false
         }
       ],
-      "title": "gNB PRB Stauration",
+      "title": "gNB Uplink PRB Stauration",
       "type": "gauge"
     },
     {
@@ -1163,7 +1407,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 21
+        "y": 28
       },
       "id": 1,
       "interval": "1s",
@@ -1284,7 +1528,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 21
+        "y": 28
       },
       "id": 20,
       "options": {
@@ -1399,7 +1643,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 21
+        "y": 28
       },
       "id": 21,
       "options": {
@@ -1513,7 +1757,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 21
+        "y": 28
       },
       "id": 13,
       "options": {
@@ -1589,7 +1833,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1614,10 +1858,11 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": -100
               }
             ]
-          }
+          },
+          "unit": "dBm"
         },
         "overrides": []
       },
@@ -1625,9 +1870,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 28
+        "y": 35
       },
-      "id": 16,
+      "id": 18,
       "options": {
         "legend": {
           "calcs": [],
@@ -1643,34 +1888,19 @@
       "pluginVersion": "11.3.0",
       "targets": [
         {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "oai_gnb_mac_dl_mcs",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "dl_mcs_ue_rnti={{rnti}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "monarch-thanos"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "oai_gnb_mac_ul_mcs",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "ul_mcs_ue_rnti={{rnti}}",
+          "editorMode": "code",
+          "expr": "oai_gnb_mac_snr",
+          "instant": false,
+          "legendFormat": "ue_rnti={{rnti}}",
           "range": true,
-          "refId": "B",
-          "useBackend": false
+          "refId": "A"
         }
       ],
-      "title": "MCS per RNTI",
+      "title": "SNR per RNTI",
       "type": "timeseries"
     },
     {
@@ -1738,9 +1968,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 28
+        "y": 35
       },
-      "id": 18,
+      "id": 31,
       "options": {
         "legend": {
           "calcs": [],
@@ -1761,14 +1991,310 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "oai_gnb_mac_snr",
+          "expr": "oai_gnb_rrc_sinr",
           "instant": false,
           "legendFormat": "ue_rnti={{rnti}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SNR per RNTI",
+      "title": "SINR per RNTI",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 35
+      },
+      "id": 29,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "oai_gnb_rrc_rsrp",
+          "legendFormat": "ue_rnti={{rnti}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "RSRP per RNTI",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 35
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "oai_gnb_rrc_rsrq",
+          "legendFormat": "ue_rnti={{rnti}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "RSRQ per RNTI",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 43
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "oai_gnb_mac_dl_mcs",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "dl_mcs_ue_rnti={{rnti}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "monarch-thanos"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "oai_gnb_mac_ul_mcs",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "legendFormat": "ul_mcs_ue_rnti={{rnti}}",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "MCS per RNTI",
       "type": "timeseries"
     },
     {
@@ -1835,9 +2361,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 28
+        "w": 9,
+        "x": 6,
+        "y": 43
       },
       "id": 25,
       "options": {
