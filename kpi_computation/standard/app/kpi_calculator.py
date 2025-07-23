@@ -22,15 +22,15 @@ MONARCH_THANOS_URL = os.getenv("MONARCH_THANOS_URL")
 DEFAULT_UPDATE_PERIOD = 1
 UPDATE_PERIOD = int(os.environ.get('UPDATE_PERIOD', DEFAULT_UPDATE_PERIOD))
 EXPORTER_PORT = 9000
-TIME_RANGE = os.getenv("TIME_RANGE", "5s")
+TIME_RANGE = os.getenv("TIME_RANGE", "1s")
 
 
 # Prometheus variables
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
 MAC_THROUGHPUT = prom.Gauge('mac_throughput', 'MAC throughput per UE RNTI (bits/sec)', ['rnti', 'direction'])
 NUMBER_UES = prom.Gauge('number_ues', 'Number of connected UEs in the gNB')
-# SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)', ['rnti'])
-SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)')
+SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)', ['rnti'])
+# SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)')
 
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
@@ -332,13 +332,13 @@ def export_number_ues_to_prometheus(value):
     log.info(f"VALUE ={value}")
     NUMBER_UES.set(value)
 
-def export_saturation_percentage_to_prometheus(value):
-    log.info(f"VALUE ={value}")
-    SATURATION_PERCENTAGE.set(value)
+# def export_saturation_percentage_to_prometheus(value):
+#     log.info(f"VALUE ={value}")
+#     SATURATION_PERCENTAGE.set(value)
 
-# def export_saturation_percentage_to_prometheus(rnti, value):
-#     log.info(f"RNTI={rnti} | VALUE ={value}")
-#     SATURATION_PERCENTAGE.labels(rnti=rnti).set(value)
+def export_saturation_percentage_to_prometheus(rnti, value):
+    log.info(f"RNTI={rnti} | VALUE ={value}")
+    SATURATION_PERCENTAGE.labels(rnti=rnti).set(value)
 
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
@@ -362,12 +362,12 @@ def run_kpi_computation():
     number_ues = get_number_ues()
     export_number_ues_to_prometheus(number_ues)
 
-    saturation_percentage = get_saturation_percentage()
-    export_saturation_percentage_to_prometheus(saturation_percentage)
+    # saturation_percentage = get_saturation_percentage()
+    # export_saturation_percentage_to_prometheus(saturation_percentage)
 
-    # saturation_percentage = get_saturation_percentage_per_rnti()
-    # for rnti, value in saturation_percentage.items():
-    #     export_saturation_percentage_to_prometheus(rnti, value)
+    saturation_percentage = get_saturation_percentage_per_rnti()
+    for rnti, value in saturation_percentage.items():
+        export_saturation_percentage_to_prometheus(rnti, value)
 
 
 if __name__ == "__main__":
