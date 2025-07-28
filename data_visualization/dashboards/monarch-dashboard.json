@@ -1330,7 +1330,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "saturation_percentage",
+          "expr": "saturation_percentage > 0",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "ue_rnti={{rnti}}",
@@ -1339,7 +1339,7 @@
           "useBackend": false
         }
       ],
-      "title": "gNB Uplink PRB Stauration",
+      "title": "gNB Uplink PRB Saturation",
       "type": "gauge"
     },
     {

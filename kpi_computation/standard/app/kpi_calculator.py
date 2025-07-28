@@ -273,6 +273,10 @@ def get_saturation_percentage_per_rnti():
                     val = float(result["value"][1])
                     nprbs[rnti] = val
                     log.debug(f"NPRB for active RNTI {rnti}: {val}")
+                else:
+                    val = float(0)
+                    nprbs[rnti] = val
+                    log.debug(f"0 NPRB For Disconnected RNTI {rnti}")
             except (KeyError, ValueError) as e:
                 log.warning(f"Failed to parse NPRB result: {e}")
     else:
