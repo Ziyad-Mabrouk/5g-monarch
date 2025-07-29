@@ -2303,7 +2303,7 @@
               }
             ]
           },
-          "unit": "dBm"
+          "unit": "dB"
         },
         "overrides": []
       },
@@ -2532,7 +2532,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "dB"
         },
         "overrides": []
       },
@@ -2624,7 +2625,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "dB"
         },
         "overrides": []
       },
@@ -2717,7 +2719,7 @@
               }
             ]
           },
-          "unit": "dBm"
+          "unit": "dB"
         },
         "overrides": []
       },
