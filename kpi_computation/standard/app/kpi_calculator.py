@@ -7,6 +7,7 @@
 Prometheus exporter which exports slice throughput KPI.
 For use with the 5G-MONARCH project and Open5GS.
 """
+from datetime import datetime, timedelta, timezone
 import os
 import logging
 import time
@@ -21,12 +22,15 @@ MONARCH_THANOS_URL = os.getenv("MONARCH_THANOS_URL")
 DEFAULT_UPDATE_PERIOD = 1
 UPDATE_PERIOD = int(os.environ.get('UPDATE_PERIOD', DEFAULT_UPDATE_PERIOD))
 EXPORTER_PORT = 9000
-TIME_RANGE = os.getenv("TIME_RANGE", "5s")
+TIME_RANGE = os.getenv("TIME_RANGE", "1s")
 
 
 # Prometheus variables
 SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
 MAC_THROUGHPUT = prom.Gauge('mac_throughput', 'MAC throughput per UE RNTI (bits/sec)', ['rnti', 'direction'])
+NUMBER_UES = prom.Gauge('number_ues', 'Number of connected UEs in the gNB')
+SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)', ['rnti'])
+# SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)')
 
 # get rid of bloat
 prom.REGISTRY.unregister(prom.PROCESS_COLLECTOR)
@@ -97,20 +101,194 @@ def get_mac_throughput_per_rnti_and_direction(direction):
         log.warning(f"Invalid MAC direction: {direction}")
         return {}
 
-    query = f'rate({metric}[{TIME_RANGE}]) * 8'  # bytes/sec -> bits/sec
-    log.debug(query)
-    params = {'query': query}
-    results = query_prometheus(params, MONARCH_THANOS_URL)
+    # query = f'rate({metric}[{TIME_RANGE}]) * 8'  # bytes/sec -> bits/sec
+    # log.debug(query)
+    # params = {'query': query}
+    # results = query_prometheus(params, MONARCH_THANOS_URL)
 
+    # throughput_per_rnti = {}
+    # if results:
+    #     for result in results:
+    #         rnti = result["metric"]["rnti"]
+    #         value = float(result["value"][1])
+    #         if rnti:
+    #             throughput_per_rnti[rnti] = value
+    # return throughput_per_rnti
+
+    utc = timezone.utc
+    end_time = datetime.now(utc)
+    start_time = end_time - timedelta(seconds=int(TIME_RANGE[:-1]))
+
+    end_data = query_prometheus({
+        "query": f"{metric}",
+        "time": end_time.replace(tzinfo=None).timestamp()
+    }, MONARCH_THANOS_URL)
+
+    start_data = query_prometheus({
+        "query": f"{metric}",
+        "time": start_time.replace(tzinfo=None).timestamp()
+    }, MONARCH_THANOS_URL)
+
+    # match RNTIs and compute throughput manually
     throughput_per_rnti = {}
-    if results:
-        for result in results:
-            rnti = result["metric"]["rnti"]
-            value = float(result["value"][1])
-            if rnti:
-                throughput_per_rnti[rnti] = value
-    return throughput_per_rnti
+
+    for result in end_data:
+        rnti = result["metric"]["rnti"]
+        end_value = float(result["value"][1])
+        start_value = next(
+            (float(r["value"][1]) for r in start_data if r["metric"]["rnti"] == rnti), None
+        )
+        if start_value is not None:
+            delta_bytes = end_value - start_value
+            bits_per_sec = (delta_bytes * 8) / int(TIME_RANGE[:-1])  # seconds
+            throughput_per_rnti[rnti] = bits_per_sec
+    return throughput_per_rnti 
    
+def get_number_ues():
+    rntis = set()
+    metric = "oai_gnb_mac_tx_bytes"
+    
+    query = f'rate({metric}[{TIME_RANGE}])'
+    results = query_prometheus({'query': query}, MONARCH_THANOS_URL)
+
+    if not results:
+        log.warning("No rate results from oai_gnb_mac_tx_bytes for number_ues")
+        return 0
+
+    for result in results:
+        rnti = result["metric"].get("rnti")
+        value = float(result["value"][1])
+        log.debug(f"RNTI: {rnti}, rate: {value}")
+        if rnti and value > 0:
+            rntis.add(rnti)
+
+    count = len(rntis)
+    log.info(f"Found {count} active RNTIs (non-zero tx rate) for number_ues")
+    return count
+
+def get_saturation_percentage():
+    """
+    Compute gNB PRB saturation only for UEs with active traffic:
+    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
+    """
+    active_rntis = set()
+    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
+    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
+
+    
+    if tx_results:
+        for result in tx_results:
+            rnti = result["metric"].get("rnti")
+            value = float(result["value"][1])
+            if rnti and value > 0:
+                active_rntis.add(rnti)
+    else:
+        log.warning("No active RNTIs found from tx_bytes rate")
+
+    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
+    mac_nprb_query = "oai_gnb_mac_nprb"
+    nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
+
+    total_nprb = 0.0
+    if nprb_results:
+        for result in nprb_results:
+            try:
+                rnti = result["metric"]["rnti"]
+                if rnti in active_rntis:
+                    val = float(result["value"][1])
+                    total_nprb += val
+                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
+            except (KeyError, ValueError) as e:
+                log.warning(f"Failed to parse NPRB result: {e}")
+    else:
+        log.warning("No results for oai_gnb_mac_nprb")
+
+    l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
+    if not l1_result:
+        log.warning("No results for oai_gnb_l1_total_prbs")
+        return
+
+    try:
+        total_prbs = float(l1_result[0]["value"][1])
+        log.debug(f"Total PRBs from L1: {total_prbs}")
+    except (IndexError, KeyError, ValueError) as e:
+        log.warning(f"Error parsing total PRBs: {e}")
+        return
+
+    if total_prbs == 0:
+        log.warning("Total PRBs is zero, cannot divide!")
+        return
+
+    saturation_percentage = (total_nprb / total_prbs) * 100
+    log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Active NPRBs={total_nprb}, Total PRBs={total_prbs})")
+    return saturation_percentage
+
+def get_saturation_percentage_per_rnti():
+    """
+    Compute gNB PRB saturation only for UEs with active traffic:
+    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
+    Returns a dictionary of the form {rnti: value (percentage)}
+    """
+    active_rntis = set()
+    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
+    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
+
+    
+    if tx_results:
+        for result in tx_results:
+            rnti = result["metric"].get("rnti")
+            value = float(result["value"][1])
+            if rnti and value > 0:
+                active_rntis.add(rnti)
+    else:
+        log.warning("No active RNTIs found from tx_bytes rate")
+
+    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
+
+    l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
+    if not l1_result:
+        log.warning("No results for oai_gnb_l1_total_prbs")
+        return
+
+    try:
+        total_prbs = float(l1_result[0]["value"][1])
+        log.debug(f"Total PRBs from L1: {total_prbs}")
+    except (IndexError, KeyError, ValueError) as e:
+        log.warning(f"Error parsing total PRBs: {e}")
+        return
+
+    if total_prbs == 0:
+        log.warning("Total PRBs is zero, cannot divide!")
+        return
+
+    mac_nprb_query = "oai_gnb_mac_nprb"
+    nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
+
+    nprbs = {}
+    if nprb_results:
+        for result in nprb_results:
+            try:
+                rnti = result["metric"]["rnti"]
+                if rnti in active_rntis:
+                    val = float(result["value"][1])
+                    nprbs[rnti] = val
+                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
+                else:
+                    val = float(0)
+                    nprbs[rnti] = val
+                    log.debug(f"0 NPRB For Disconnected RNTI {rnti}")
+            except (KeyError, ValueError) as e:
+                log.warning(f"Failed to parse NPRB result: {e}")
+    else:
+        log.warning("No results for oai_gnb_mac_nprb")
+
+    saturation_percentage_per_rnti = {}
+    for rnti, nprb in nprbs.items():
+        saturation_percentage_per_rnti[rnti] = (nprb / total_prbs) * 100
+        log.info(f"Computed Saturation = {saturation_percentage_per_rnti[rnti]:.2f}%")
+
+    return saturation_percentage_per_rnti
+
 def get_active_snssais():
     """
     Return a list of active SNSSAIs from the SMF.
@@ -152,6 +330,18 @@ def export_mac_throughput_to_prometheus(rnti, direction, value):
     log.info(f"RNTI={rnti} | DIR={direction} | RATE (Mbps)={value_mbits}")
     MAC_THROUGHPUT.labels(rnti=rnti, direction=direction).set(value)
 
+def export_number_ues_to_prometheus(value):
+    log.info(f"VALUE ={value}")
+    NUMBER_UES.set(value)
+
+# def export_saturation_percentage_to_prometheus(value):
+#     log.info(f"VALUE ={value}")
+#     SATURATION_PERCENTAGE.set(value)
+
+def export_saturation_percentage_to_prometheus(rnti, value):
+    log.info(f"RNTI={rnti} | VALUE ={value}")
+    SATURATION_PERCENTAGE.labels(rnti=rnti).set(value)
+
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
     active_snssais = get_active_snssais()
@@ -170,6 +360,17 @@ def run_kpi_computation():
         mac_throughput = get_mac_throughput_per_rnti_and_direction(direction)
         for rnti, value in mac_throughput.items():
             export_mac_throughput_to_prometheus(rnti, direction, value)
+    
+    number_ues = get_number_ues()
+    export_number_ues_to_prometheus(number_ues)
+
+    # saturation_percentage = get_saturation_percentage()
+    # export_saturation_percentage_to_prometheus(saturation_percentage)
+
+    saturation_percentage = get_saturation_percentage_per_rnti()
+    for rnti, value in saturation_percentage.items():
+        export_saturation_percentage_to_prometheus(rnti, value)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='KPI calculator.')

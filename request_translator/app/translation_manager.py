@@ -17,6 +17,12 @@ class TranslationManager:
         elif kpi_name == "mac_throughput":
             components = self.translate_mac_throughput(request)
 
+        elif kpi_name == "number_ues":
+            components = self.translate_number_ues(request)
+
+        elif kpi_name == "saturation_percentage":
+            components = self.translate_saturation_percentage(request)
+
         else:
             raise NotImplementedError(f"KPI '{kpi_name}' is not supported")
 
@@ -98,6 +104,59 @@ class TranslationManager:
         component_info["metrics"] = [
             "oai_gnb_mac_tx_bytes",
             "oai_gnb_mac_rx_bytes"
+            ]
+        components_to_monitor.append(component_info)
+
+        self.logger.debug(f"Components to monitor: {components_to_monitor}")
+        return components_to_monitor
+    
+    def translate_number_ues(self, request):
+        """
+        Translates a Number of connected UEs request into metrics from gNB to monitor.
+        """
+        self.logger.info("Translating Number of connected UEs request...")
+
+        components_to_monitor = []
+
+        # get pod_info for the gNB by interacting with the service orchestrator
+        pod_info = self.service_orchestrator.get_gnb()
+        self.logger.info(f"Pod info for gNB: {pod_info}")
+
+        component_info = {}
+        component_info["type"] = "pod"
+        component_info["nf"] = "gnb"
+        component_info["nss"] = "edge"
+        component_info["pod_name"] = pod_info["name"]
+        component_info["pod_ip"] = pod_info["pod_ip"]
+        component_info["metrics"] = [
+            "oai_gnb_mac_tx_bytes"
+            ]
+        components_to_monitor.append(component_info)
+
+        self.logger.debug(f"Components to monitor: {components_to_monitor}")
+        return components_to_monitor
+    
+    def translate_saturation_percentage(self, request):
+        """
+        Translates a PRB Saturaion percentage request into metrics from gNB to monitor.
+        """
+        self.logger.info("Translating PRB Saturaion percentage request...")
+
+        components_to_monitor = []
+
+        # get pod_info for the gNB by interacting with the service orchestrator
+        pod_info = self.service_orchestrator.get_gnb()
+        self.logger.info(f"Pod info for gNB: {pod_info}")
+
+        component_info = {}
+        component_info["type"] = "pod"
+        component_info["nf"] = "gnb"
+        component_info["nss"] = "edge"
+        component_info["pod_name"] = pod_info["name"]
+        component_info["pod_ip"] = pod_info["pod_ip"]
+        component_info["metrics"] = [
+            "oai_gnb_mac_nprb",
+            "oai_gnb_l1_total_prbs"
             ]
         components_to_monitor.append(component_info)
 
