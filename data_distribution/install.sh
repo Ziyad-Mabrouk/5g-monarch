@@ -1,7 +1,7 @@
 #!/bin/bash
 THANOS_VER="12.4.3"
-HELM_REPO_URL="https://charts.bitnami.com/bitnami"
-HELM_REPO_NAME="bitnami"
+HELM_REPO_URL="https://charts.bitnamilegacy.com/bitnamilegacy"
+HELM_REPO_NAME="bitnamilegacy"
 NAMESPACE="monarch"
 MODULE_NAME="datadist"
 

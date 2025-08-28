@@ -2,10 +2,10 @@
 Thanos deployment
 
 # install
-Use the [bitnami/thanos helm chart](https://artifacthub.io/packages/helm/bitnami/thanos)
+Use the [bitnamilegacy/thanos helm chart](https://artifacthub.io/packages/helm/bitnamilegacy/thanos)
 
 ```
-helm install thanos -n thanos -f thanos-values.yaml bitnami/thanos
+helm install thanos -n thanos -f thanos-values.yaml bitnamilegacy/thanos
 ```
 
 # enabling thanos components in prometheus helm chart
