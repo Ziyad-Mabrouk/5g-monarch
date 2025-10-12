@@ -19,7 +19,7 @@ spec:
         component: kpi-calculator
     spec:
       containers:
-        - image: ghcr.io/ziyad-mabrouk/kpi-calculator-open5gs:v1.0.0-standard
+        - image: ghcr.io/niloysh/kpi-calculator-open5gs:v1.0.0
           name: kpi-calculator
           imagePullPolicy: Always
           ports:
@@ -31,7 +31,7 @@ spec:
             - name: MONARCH_THANOS_URL
               value: "${MONARCH_THANOS_URL}"
             - name: TIME_RANGE
-              value: "30s"
+              value: "5s"
           command: ["/bin/bash", "-c", "--"]
           args: ["python -u kpi_calculator.py"]
           resources:
@@ -51,11 +51,6 @@ metadata:
   labels:
     app: monarch
     component: kpi-calculator
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io.scheme: "http"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "9000"
 spec:
   ports:
     - name: metrics # expose metrics port
@@ -65,3 +60,21 @@ spec:
     app: monarch # target pods
     component: kpi-calculator
 ---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kpi-calculator-servicemonitor
+  namespace: monarch
+  labels:
+    app: monarch
+    component: kpi-calculator
+spec:
+  namespaceSelector:
+    any: true # important otherwise this is not picked up
+  selector:
+    matchLabels:
+      app: monarch # target service
+      component: kpi-calculator
+  endpoints:
+    - port: metrics
+      interval: 1s

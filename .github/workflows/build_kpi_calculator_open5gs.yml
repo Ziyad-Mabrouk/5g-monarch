@@ -2,9 +2,9 @@ name: Build & Push 5G-Monarch KPI Calculator image
 
 on:
   push:
-    branches: [ test ]
+    branches: [ srsRAN_mertrics ]
     paths:
-      - 'kpi_computation/standard/**'
+      - 'kpi_computation/core/standard/**'
   workflow_dispatch:
 
 env:
@@ -13,7 +13,7 @@ env:
 
 jobs:
 
-  build-and-push-kpi-calculator:
+  build-and-push-kpi-calculator-open5gs:
     runs-on: ubuntu-22.04
 
     steps:
@@ -25,7 +25,7 @@ jobs:
 
     - name: Build kpi-calculator-open5gs
       run: |
-        docker build --tag kpi-calculator-open5gs:${{ env.TAG }} -f kpi_computation/standard/Dockerfile ./kpi_computation/standard
+        docker build --tag kpi-calculator-open5gs:${{ env.TAG }} -f kpi_computation/core/standard/Dockerfile ./kpi_computation/core/standard
 
     - name: Tag and push to GHCR
       run: |

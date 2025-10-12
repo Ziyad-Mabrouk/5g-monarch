@@ -28,26 +28,34 @@ class NFVOrchestratorManager:
         self.logger.error(f"Could not connect to NFV Orchestrator after {max_retries} attempts")
         exit(1)
 
-    def mde_install(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/mde/install")
+    def core_mde_install(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/core_mde/install")
         return response
 
-    def mde_uninstall(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/mde/uninstall")
+    def core_mde_uninstall(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/core_mde/uninstall")
         return response
     
-    def gnb_mde_install(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/gnb_mde/install")
+    def ran_mde_install(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/ran_mde/install")
         return response
 
-    def gnb_mde_uninstall(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/gnb_mde/uninstall")
+    def ran_mde_uninstall(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/ran_mde/uninstall")
         return response
 
-    def kpi_computation_install(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/kpi-computation/install")
+    def core_kpi_computation_install(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/core_kpi_computation/install")
         return response
 
-    def kpi_computation_uninstall(self):
-        response = requests.post(self.nfv_orchestrator_uri + "/kpi-computation/uninstall")
+    def core_kpi_computation_uninstall(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/core_kpi_computation/uninstall")
+        return response
+        
+    def ran_kpi_computation_install(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/ran_kpi_computation/install")
+        return response
+
+    def ran_kpi_computation_uninstall(self):
+        response = requests.post(self.nfv_orchestrator_uri + "/ran_kpi_computation/uninstall")
         return response

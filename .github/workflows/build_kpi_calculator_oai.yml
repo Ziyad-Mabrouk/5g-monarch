@@ -1,19 +1,19 @@
-name: Build & Push 5G-Monarch Request Translator image
+name: Build & Push 5G-Monarch KPI Calculator image
 
 on:
   push:
     branches: [ srsRAN_mertrics ]
     paths:
-      - 'request_translator/**'
+      - 'kpi_computation/ran/standard/**'
   workflow_dispatch:
 
 env:
   GHCR_USER: ziyad-mabrouk
-  TAG: v1.0.0
+  TAG: v1.0.0-standard
 
 jobs:
 
-  build-and-push-request-translator:
+  build-and-push-kpi-calculator-oai:
     runs-on: ubuntu-22.04
 
     steps:
@@ -23,14 +23,14 @@ jobs:
     - name: Log in to GHCR
       run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ env.GHCR_USER }}" --password-stdin
 
-    - name: Build request-translator
+    - name: Build kpi-calculator-oai
       run: |
-        docker build --tag request-translator:${{ env.TAG }} -f request_translator/Dockerfile ./request_translator
+        docker build --tag kpi-calculator-oai:${{ env.TAG }} -f kpi_computation/ran/standard/Dockerfile ./kpi_computation/ran/standard
 
     - name: Tag and push to GHCR
       run: |
-        IMAGE_URI=ghcr.io/${{ env.GHCR_USER }}/request-translator:${{ env.TAG }}
-        docker tag request-translator:${{ env.TAG }} "$IMAGE_URI"
+        IMAGE_URI=ghcr.io/${{ env.GHCR_USER }}/kpi-calculator-oai:${{ env.TAG }}
+        docker tag kpi-calculator-oai:${{ env.TAG }} "$IMAGE_URI"
         docker push "$IMAGE_URI"
 
     - name: Log out of GHCR

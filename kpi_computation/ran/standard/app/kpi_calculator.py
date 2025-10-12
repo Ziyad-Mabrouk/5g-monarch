@@ -4,8 +4,8 @@
 # version ='1.0.0'
 # ---------------------------------------------------------------------------
 """
-Prometheus exporter which exports slice throughput KPI.
-For use with the 5G-MONARCH project and Open5GS.
+Prometheus exporter which exports RAN KPI.
+For use with the 5G-MONARCH project and OAI.
 """
 from datetime import datetime, timedelta, timezone
 import os
@@ -26,7 +26,6 @@ TIME_RANGE = os.getenv("TIME_RANGE", "1s")
 
 
 # Prometheus variables
-SLICE_THROUGHPUT = prom.Gauge('slice_throughput', 'throughput per slice (bits/sec)', ['snssai', 'seid', 'direction'])
 MAC_THROUGHPUT = prom.Gauge('mac_throughput', 'MAC throughput per UE RNTI (bits/sec)', ['rnti', 'direction'])
 NUMBER_UES = prom.Gauge('number_ues', 'Number of connected UEs in the gNB')
 SATURATION_PERCENTAGE = prom.Gauge('saturation_percentage', 'Percentage of total gNB PRBs currently scheduled (NPRB sum / total PRBs * 100)', ['rnti'])
@@ -56,36 +55,6 @@ def query_prometheus(params, url):
     except (KeyError, IndexError, ValueError) as e:
         log.error(f"Failed to parse Prometheus response: {e}")
         log.warning("No data available!")
-
-def get_slice_throughput_per_seid_and_direction(snssai, direction):
-    """
-    Queries both the SMF and UPF to get the throughput per SEID and direction.
-    Returns a dictionary of the form {seid: value (bits/sec)}
-    """
-    time_range = TIME_RANGE
-    throughput_per_seid = {}  # {seid: value (bits/sec)}
-
-    direction_mapping = {
-        "uplink": "indatavolumen3upf",
-        "downlink": "outdatavolumen3upf"
-    }
-
-    if direction not in direction_mapping:
-        log.error("Invalid direction")
-        return
-
-    query = f'sum by (seid) (rate(fivegs_ep_n3_gtp_{direction_mapping[direction]}_seid[{time_range}]) * on (seid) group_right sum(fivegs_smffunction_sm_seid_session{{snssai="{snssai}"}}) by (seid, snssai)) * 8'
-    log.debug(query)
-    params = {'query': query}
-    results = query_prometheus(params, MONARCH_THANOS_URL)
-
-    if results:
-        for result in results:
-            seid = result["metric"]["seid"]
-            value = float(result["value"][1])
-            throughput_per_seid[seid] = value
-
-    return throughput_per_seid
 
 def get_mac_throughput_per_rnti_and_direction(direction):
     """
@@ -289,18 +258,6 @@ def get_saturation_percentage_per_rnti():
 
     return saturation_percentage_per_rnti
 
-def get_active_snssais():
-    """
-    Return a list of active SNSSAIs from the SMF.
-    """
-    time_range = TIME_RANGE
-    query = f'sum by (snssai) (rate(fivegs_smffunction_sm_seid_session[{time_range}]))'
-    log.debug(query)
-    params = {'query': query}
-    results = query_prometheus(params, MONARCH_THANOS_URL)
-    active_snssais = [result["metric"]["snssai"] for result in results]
-    return active_snssais
-
 def main():
     log.info("Starting Prometheus server on port {}".format(EXPORTER_PORT))
 
@@ -319,11 +276,6 @@ def main():
         except Exception as e:
             log.error(f"Failing to run KPI computation: {e}")
         time.sleep(UPDATE_PERIOD)
-
-def export_to_prometheus(snssai, seid, direction, value):
-    value_mbits = round(value / 10 ** 6, 6)
-    log.info(f"SNSSAI={snssai} | SEID={seid} | DIR={direction:8s} | RATE (Mbps)={value_mbits}")
-    SLICE_THROUGHPUT.labels(snssai=snssai, seid=seid, direction=direction).set(value)
 
 def export_mac_throughput_to_prometheus(rnti, direction, value):
     value_mbits = round(value / 10 ** 6, 6)
@@ -344,17 +296,6 @@ def export_saturation_percentage_to_prometheus(rnti, value):
 
 def run_kpi_computation():
     directions = ["uplink", "downlink"]
-    active_snssais = get_active_snssais()
-    if not active_snssais:
-        log.warning("No active SNSSAIs found")
-        return
-    
-    log.debug(f"Active SNSSAIs: {active_snssais}")
-    for snssai in active_snssais:
-        for direction in directions:
-            throughput_per_seid = get_slice_throughput_per_seid_and_direction(snssai, direction)
-            for seid, value in throughput_per_seid.items():
-                export_to_prometheus(snssai, seid, direction, value)
 
     for direction in directions:
         mac_throughput = get_mac_throughput_per_rnti_and_direction(direction)
