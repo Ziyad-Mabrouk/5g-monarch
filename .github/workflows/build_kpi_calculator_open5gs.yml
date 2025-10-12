@@ -2,7 +2,7 @@ name: Build & Push 5G-Monarch KPI Calculator image
 
 on:
   push:
-    branches: [ srsRAN_mertrics ]
+    branches: [ with_data_persistance_for_sopnodes ]
     paths:
       - 'kpi_computation/core/standard/**'
   workflow_dispatch:
