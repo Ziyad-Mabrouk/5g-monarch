@@ -35,35 +35,35 @@ class DirectiveManager:
             # for now, we will just install pre-configured MDE and KPI Computation
             # if NFV orchestrator supports it, we can change the configuration MDE and KPI computation components
             # using the information in the directive
-            self.logger.info("Installing MDE")
-            response_mde = self.nfv_orchestrator.mde_install()
+            self.logger.info("Installing Core MDE")
+            response_mde = self.nfv_orchestrator.core_mde_install()
             if response_mde.status_code != 200:
-                self.logger.error("Error installing MDE: %s", response_mde.text)
+                self.logger.error("Error installing Core MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Installing KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_install()
+            self.logger.info("Installing Core KPI Computation")
+            response_kpi = self.nfv_orchestrator.core_kpi_computation_install()
             if response_kpi.status_code != 200:
-                self.logger.error("Error installing KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error installing Core KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both MDE and KPI Computation installed successfully.")
+            self.logger.info("Both Core MDE and KPI Computation installed successfully.")
             return self._create_success_response(action="installed")
 
         elif directive["action"] == "delete":
-            self.logger.info("Uninstalling MDE")
-            response_mde = self.nfv_orchestrator.mde_uninstall()
+            self.logger.info("Uninstalling Core MDE")
+            response_mde = self.nfv_orchestrator.core_mde_uninstall()
             if response_mde.status_code != 200:
-                self.logger.error("Error uninstalling MDE: %s", response_mde.text)
+                self.logger.error("Error uninstalling Core MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Uninstalling KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_uninstall()
+            self.logger.info("Uninstalling Core KPI Computation")
+            response_kpi = self.nfv_orchestrator.core_kpi_computation_uninstall()
             if response_kpi.status_code != 200:
-                self.logger.error("Error uninstalling KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error uninstalling Core KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both MDE and KPI Computation uninstalled successfully.")
+            self.logger.info("Both Core MDE and KPI Computation uninstalled successfully.")
             return self._create_success_response(action="deleted")
         
     def process_mac_throughput_directive(self, directive):
@@ -73,35 +73,35 @@ class DirectiveManager:
             # for now, we will just install pre-configured MDE and KPI Computation
             # if NFV orchestrator supports it, we can change the configuration MDE and KPI computation components
             # using the information in the directive
-            self.logger.info("Installing gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_install()
+            self.logger.info("Installing RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_install()
             if response_mde.status_code != 200:
-                self.logger.error("Error installing gNB MDE: %s", response_mde.text)
+                self.logger.error("Error installing RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Installing KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_install()
+            self.logger.info("Installing RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_install()
             if response_kpi.status_code != 200:
-                self.logger.error("Error installing KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error installing RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation installed successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation installed successfully.")
             return self._create_success_response(action="installed")
 
         elif directive["action"] == "delete":
-            self.logger.info("Uninstalling gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_uninstall()
+            self.logger.info("Uninstalling RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_uninstall()
             if response_mde.status_code != 200:
-                self.logger.error("Error uninstalling gNB MDE: %s", response_mde.text)
+                self.logger.error("Error uninstalling RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Uninstalling KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_uninstall()
+            self.logger.info("Uninstalling RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_uninstall()
             if response_kpi.status_code != 200:
-                self.logger.error("Error uninstalling KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error uninstalling RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation uninstalled successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation uninstalled successfully.")
             return self._create_success_response(action="deleted")
         
     def process_number_ues_directive(self, directive):
@@ -111,35 +111,35 @@ class DirectiveManager:
             # for now, we will just install pre-configured MDE and KPI Computation
             # if NFV orchestrator supports it, we can change the configuration MDE and KPI computation components
             # using the information in the directive
-            self.logger.info("Installing gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_install()
+            self.logger.info("Installing RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_install()
             if response_mde.status_code != 200:
-                self.logger.error("Error installing gNB MDE: %s", response_mde.text)
+                self.logger.error("Error installing RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Installing KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_install()
+            self.logger.info("Installing RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_install()
             if response_kpi.status_code != 200:
-                self.logger.error("Error installing KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error installing RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation installed successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation installed successfully.")
             return self._create_success_response(action="installed")
 
         elif directive["action"] == "delete":
-            self.logger.info("Uninstalling gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_uninstall()
+            self.logger.info("Uninstalling RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_uninstall()
             if response_mde.status_code != 200:
-                self.logger.error("Error uninstalling gNB MDE: %s", response_mde.text)
+                self.logger.error("Error uninstalling RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Uninstalling KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_uninstall()
+            self.logger.info("Uninstalling RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_uninstall()
             if response_kpi.status_code != 200:
-                self.logger.error("Error uninstalling KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error uninstalling RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation uninstalled successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation uninstalled successfully.")
             return self._create_success_response(action="deleted")
         
     def process_saturation_percentage_directive(self, directive):
@@ -149,35 +149,35 @@ class DirectiveManager:
             # for now, we will just install pre-configured MDE and KPI Computation
             # if NFV orchestrator supports it, we can change the configuration MDE and KPI computation components
             # using the information in the directive
-            self.logger.info("Installing gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_install()
+            self.logger.info("Installing RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_install()
             if response_mde.status_code != 200:
-                self.logger.error("Error installing gNB MDE: %s", response_mde.text)
+                self.logger.error("Error installing RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Installing KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_install()
+            self.logger.info("Installing RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_install()
             if response_kpi.status_code != 200:
-                self.logger.error("Error installing KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error installing RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation installed successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation installed successfully.")
             return self._create_success_response(action="installed")
 
         elif directive["action"] == "delete":
-            self.logger.info("Uninstalling gNB MDE")
-            response_mde = self.nfv_orchestrator.gnb_mde_uninstall()
+            self.logger.info("Uninstalling RAN MDE")
+            response_mde = self.nfv_orchestrator.ran_mde_uninstall()
             if response_mde.status_code != 200:
-                self.logger.error("Error uninstalling gNB MDE: %s", response_mde.text)
+                self.logger.error("Error uninstalling RAN MDE: %s", response_mde.text)
                 return response_mde
 
-            self.logger.info("Uninstalling KPI Computation")
-            response_kpi = self.nfv_orchestrator.kpi_computation_uninstall()
+            self.logger.info("Uninstalling RAN KPI Computation")
+            response_kpi = self.nfv_orchestrator.ran_kpi_computation_uninstall()
             if response_kpi.status_code != 200:
-                self.logger.error("Error uninstalling KPI Computation: %s", response_kpi.text)
+                self.logger.error("Error uninstalling RAN KPI Computation: %s", response_kpi.text)
                 return response_kpi
 
-            self.logger.info("Both gNB MDE and KPI Computation uninstalled successfully.")
+            self.logger.info("Both RAN MDE and KPI Computation uninstalled successfully.")
             return self._create_success_response(action="deleted")
 
 

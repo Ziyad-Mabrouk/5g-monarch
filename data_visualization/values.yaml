@@ -38,6 +38,7 @@ dashboardsConfigMaps:
 grafana.ini:
   dashboards:
     min_refresh_interval: 1s
+    default_home_dashboard_path: /var/lib/grafana/dashboards/default/monarch-dashboard.json
   users:
     default_theme: light
     viewers_can_edit: true

@@ -24,4 +24,4 @@ wait_for_pod_ready() {
     print_success "Pod $label_value is ready."
 }
 
-wait_for_pod_ready "component" "kpi-calculator"
+wait_for_pod_ready "component" "kpi-calculator-open5gs"
