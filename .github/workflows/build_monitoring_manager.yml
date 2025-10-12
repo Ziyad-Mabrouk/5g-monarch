@@ -2,7 +2,7 @@ name: Build & Push 5G-Monarch Monioring Manager image
 
 on:
   push:
-    branches: [ srsRAN_mertrics ]
+    branches: [ srsRAN_metrics ]
     paths:
       - 'monitoring_manager/**'
   workflow_dispatch:
