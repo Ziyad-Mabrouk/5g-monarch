@@ -932,7 +932,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "ue_ul_brate > 0",
+          "expr": "ue_ul_brate",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "ue_rnti={{rnti}}",
@@ -1215,7 +1215,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "100* (ue_dl_nof_nok) / (ue_dl_nof_ok + ue_dl_nof_nok)",
+          "expr": "100 * (ue_dl_nof_nok) / clamp_min((ue_dl_nof_ok + ue_dl_nof_nok), 1)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "ue_rnti={{rnti}}",
@@ -1224,7 +1224,7 @@
           "useBackend": false
         }
       ],
-      "title": "Downlink BLER (block-error rate) per RNTI",
+      "title": "Downlink Packet Loss Rate per RNTI",
       "type": "timeseries"
     },
     {
@@ -1312,7 +1312,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "100* (ue_ul_nof_nok) / (ue_ul_nof_ok + ue_ul_nof_nok)",
+          "expr": "100 * (ue_ul_nof_nok) / clamp_min((ue_ul_nof_ok + ue_ul_nof_nok), 1)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "ue_rnti={{rnti}}",
@@ -1321,7 +1321,7 @@
           "useBackend": false
         }
       ],
-      "title": "Uplink BLER (block-error rate) per RNTI",
+      "title": "Uplink Packet Loss Rate per RNTI",
       "type": "timeseries"
     },
     {
@@ -1411,7 +1411,7 @@
           "expr": "ue_dl_mcs",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "__auto",
+          "legendFormat": "ue_rnti={{rnti}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1809,6 +1809,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [

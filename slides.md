@@ -176,7 +176,7 @@ The request is submitted using a JSON file, where you define the KPI for monitor
 {"kpi_name":"slice_throughput",
 "kpi_description":"Throughput of the network slice",
 "sub_counter":{"sub_counter_type":"SNSSAI",
-"sub_counter_ids":["1-000001","2-000002"]}}}
+"sub_counter_ids":["1-000001","1-000002"]}}}
 ```
 We can submit a request as follows:
 ```bash
