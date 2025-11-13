@@ -1224,7 +1224,7 @@
           "useBackend": false
         }
       ],
-      "title": "Downlink Packet Loss Rate per RNTI",
+      "title": "Downlink BLER per RNTI",
       "type": "timeseries"
     },
     {
@@ -1321,7 +1321,7 @@
           "useBackend": false
         }
       ],
-      "title": "Uplink Packet Loss Rate per RNTI",
+      "title": "Uplink BLER per RNTI",
       "type": "timeseries"
     },
     {
