@@ -2021,7 +2021,8 @@
                 "value": -100
               }
             ]
-          }
+          },
+          "unit": "decbytes"
         },
         "overrides": []
       },
