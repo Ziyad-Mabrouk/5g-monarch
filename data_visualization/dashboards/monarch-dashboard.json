@@ -680,7 +680,7 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1-000001\"}",
+          "expr": "slice_throughput{direction=\"downlink\",snssai=\"1-100000\"}",
           "instant": false,
           "legendFormat": "seid={{seid}}",
           "range": true,
@@ -778,7 +778,7 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1-000001\"}",
+          "expr": "slice_throughput{direction=\"uplink\",snssai=\"1-100000\"}",
           "instant": false,
           "legendFormat": "seid={{seid}}",
           "range": true,
