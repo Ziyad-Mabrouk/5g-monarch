@@ -21,6 +21,7 @@ prometheus:
         hostPath:
           path: /mnt/data/prometheus
           type: DirectoryOrCreate
+
     additionalVolumeMounts:
       - name: prometheus-data
         mountPath: /prometheus
@@ -58,7 +59,7 @@ prometheus:
     enableRemoteWriteReceiver: true
 
     additionalArgs:
-    - name: web.enable-admin-api
+      - name: web.enable-admin-api
 
     scrapeInterval: "${MONARCH_MONITORING_INTERVAL}"
     serviceMonitorSelectorNilUsesHelmValues: false
@@ -79,7 +80,7 @@ prometheus:
         key: thanos.yaml
         name: thanos-objstore-config
       extraArgs:
-      - --ship-interval=1m
+        - --ship-interval=1m
 
     additionalScrapeConfigs:
       - job_name: "monarch-service"
@@ -95,6 +96,17 @@ prometheus:
             action: keep
             regex: true
 
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+
+          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            action: replace
+            target_label: __address__
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -102,4 +114,3 @@ prometheus:
           resources:
             requests:
               storage: 10Gi
-
