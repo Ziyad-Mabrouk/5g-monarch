@@ -484,7 +484,7 @@
           "editorMode": "code",
           "expr": "gtp_teid_latency_ns{imsi=\"001010000001121\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
-          "legendFormat": "{{teid_direction}},{{probe_role}}",
+          "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
           "refId": "A"
         }
@@ -577,7 +577,7 @@
           "editorMode": "code",
           "expr": "gtp_teid_latency_ns{imsi=\"001010000001123\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
-          "legendFormat": "{{teid_direction}},{{probe_role}}",
+          "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
           "refId": "A"
         }
@@ -670,7 +670,7 @@
           "editorMode": "code",
           "expr": "gtp_teid_latency_ns{imsi=\"001010000001122\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
-          "legendFormat": "{{teid_direction}},{{probe_role}}",
+          "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
           "refId": "A"
         }
