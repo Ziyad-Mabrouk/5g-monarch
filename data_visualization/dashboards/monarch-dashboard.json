@@ -1,200 +1,100 @@
-        "range": true,
-        "refId": "A"
-      }
-    ],
-    "title": "Mean Latency Per UE",
-    "type": "timeseries"
-  },
-  {
-    "datasource": {
-      "type": "prometheus",
-      "uid": "monarch-thanos"
-    },
-    "fieldConfig": {
-      "defaults": {
-        "color": {
-          "mode": "palette-classic"
-        },
-        "custom": {
-          "axisBorderShow": false,
-          "axisCenteredZero": false,
-          "axisColorMode": "text",
-          "axisLabel": "",
-          "axisPlacement": "auto",
-          "barAlignment": 0,
-          "barWidthFactor": 0.6,
-          "drawStyle": "line",
-          "fillOpacity": 0,
-          "gradientMode": "none",
-          "hideFrom": {
-            "legend": false,
-            "tooltip": false,
-            "viz": false
-          },
-          "insertNulls": false,
-          "lineInterpolation": "linear",
-          "lineWidth": 2,
-          "pointSize": 5,
-          "scaleDistribution": {
-            "type": "linear"
-          },
-          "showPoints": "auto",
-          "spanNulls": false,
-          "stacking": {
-            "group": "A",
-            "mode": "none"
-          },
-          "thresholdsStyle": {
-            "mode": "off"
-          }
-        },
-        "mappings": [],
-        "thresholds": {
-          "mode": "absolute",
-          "steps": [
-            {
-              "color": "green",
-              "value": null
-            },
-            {
-              "color": "red",
-              "value": 80
-            }
-          ]
-        },
-        "unit": "ms"
-      },
-      "overrides": []
-    },
-    "gridPos": {
-      "h": 8,
-      "w": 12,
-      "x": 12,
-      "y": 124
-    },
-    "id": 103,
-    "options": {
-      "legend": {
-        "calcs": [],
-        "displayMode": "list",
-        "placement": "bottom",
-        "showLegend": true
-      },
-      "tooltip": {
-        "mode": "single",
-        "sort": "none"
-      }
-    },
-    "pluginVersion": "11.3.0",
-    "targets": [
+{
+  "annotations": {
+    "list": [
       {
-        "editorMode": "code",
-        "expr": "histogram_quantile(0.50, sum by (le, imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-        "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
-        "range": true,
-        "refId": "A"
+        "builtIn": 1,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "monarch-thanos"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
-    ],
-    "title": "P50 Latency Per UE",
-    "type": "timeseries"
+    ]
   },
-  {
-    "datasource": {
-      "type": "prometheus",
-      "uid": "monarch-thanos"
-    },
-    "fieldConfig": {
-      "defaults": {
-        "color": {
-          "mode": "palette-classic"
-        },
-        "custom": {
-          "axisBorderShow": false,
-          "axisCenteredZero": false,
-          "axisColorMode": "text",
-          "axisLabel": "",
-          "axisPlacement": "auto",
-          "barAlignment": 0,
-          "barWidthFactor": 0.6,
-          "drawStyle": "line",
-          "fillOpacity": 0,
-          "gradientMode": "none",
-          "hideFrom": {
-            "legend": false,
-            "tooltip": false,
-            "viz": false
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
-          "insertNulls": false,
-          "lineInterpolation": "linear",
-          "lineWidth": 2,
-          "pointSize": 5,
-          "scaleDistribution": {
-            "type": "linear"
-          },
-          "showPoints": "auto",
-          "spanNulls": false,
-          "stacking": {
-            "group": "A",
-            "mode": "none"
-          },
-          "thresholdsStyle": {
-            "mode": "off"
-          }
-        },
-        "mappings": [],
-        "thresholds": {
-          "mode": "absolute",
-          "steps": [
-            {
-              "color": "green",
-              "value": null
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            {
-              "color": "red",
-              "value": 80
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ]
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
         },
-        "unit": "ms"
+        "overrides": []
       },
-      "overrides": []
-    },
-    "gridPos": {
-      "h": 8,
-      "w": 12,
-      "x": 0,
-      "y": 132
-    },
-    "id": 104,
-    "options": {
-      "legend": {
-        "calcs": [],
-        "displayMode": "list",
-        "placement": "bottom",
-        "showLegend": true
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 0
       },
-      "tooltip": {
-        "mode": "single",
-        "sort": "none"
-      }
-    },
-    "pluginVersion": "11.3.0",
-    "targets": [
-      {
-        "editorMode": "code",
-        "expr": "histogram_quantile(0.95, sum by (le, imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-        "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
-        "range": true,
-        "refId": "A"
-      }
-    ],
-    "title": "P95 Latency Per UE",
-    "type": "timeseries"
-  },
-  {
-    "datasource": {
-      "type": "prometheus",
-      "uid": "monarch-thanos"
-    },
-    "fieldConfig": {
-      "defaults": {
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
