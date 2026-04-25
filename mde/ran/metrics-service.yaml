@@ -39,24 +39,4 @@ spec:
       port: 9100
   selector:
     nf: gnb # target pod
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: packet-pairer-service
-  namespace: open5gs
-  labels:
-    nf: same-packet-pairer
-    app: monarch
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io.scheme: "http"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "9200"
-spec:
-  clusterIP: None
-  ports:
-    - name: metrics # expose metrics port
-      port: 9200
-  selector:
-    nf: same-packet-pairer # target pod
+
