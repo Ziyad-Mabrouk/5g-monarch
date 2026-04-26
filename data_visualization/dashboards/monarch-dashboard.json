@@ -3654,7 +3654,7 @@
       },
       "id": 101,
       "panels": [],
-      "title": "Latency Distribution",
+      "title": "Latency Distribution (Split by Direction)",
       "type": "row"
     },
     {
@@ -3741,13 +3741,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_sum[30s])) / sum by (imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_count[30s])) / 1000000",
-          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_sum{mode=\"core\"}[30s])) / sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_count{mode=\"core\"}[30s])) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Mean Latency Per UE",
+      "title": "Mean Latency Per UE (Uplink)",
       "type": "timeseries"
     },
     {
@@ -3834,13 +3834,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (le, imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "histogram_quantile(0.50, sum by (le, imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"core\"}[30s]))) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "P50 Latency Per UE",
+      "title": "P50 Latency Per UE (Uplink)",
       "type": "timeseries"
     },
     {
@@ -3927,13 +3927,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "histogram_quantile(0.95, sum by (le, imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"core\"}[30s]))) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "P95 Latency Per UE",
+      "title": "P95 Latency Per UE (Uplink)",
       "type": "timeseries"
     },
     {
@@ -4020,13 +4020,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (imsi, ue_ip, slice, probe_role, mode) (rate(gtp_teid_latency_events_total[30s]))",
-          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_events_total{mode=\"core\"}[30s]))",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Latency Event Rate Per UE",
+      "title": "Latency Event Rate Per UE (Uplink)",
       "type": "timeseries"
     },
     {
@@ -4113,13 +4113,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_sum[30s])) / sum by (slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_count[30s])) / 1000000",
-          "legendFormat": "{{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "sum by (slice, probe_role) (rate(gtp_teid_latency_observed_ns_sum{mode=\"core\"}[30s])) / sum by (slice, probe_role) (rate(gtp_teid_latency_observed_ns_count{mode=\"core\"}[30s])) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Mean Latency Per Slice",
+      "title": "Mean Latency Per Slice (Uplink)",
       "type": "timeseries"
     },
     {
@@ -4206,13 +4206,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (le, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-          "legendFormat": "{{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "histogram_quantile(0.50, sum by (le, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"core\"}[30s]))) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "P50 Latency Per Slice",
+      "title": "P50 Latency Per Slice (Uplink)",
       "type": "timeseries"
     },
     {
@@ -4299,13 +4299,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, slice, probe_role, mode) (rate(gtp_teid_latency_observed_ns_bucket[30s]))) / 1000000",
-          "legendFormat": "{{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "histogram_quantile(0.95, sum by (le, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"core\"}[30s]))) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "P95 Latency Per Slice",
+      "title": "P95 Latency Per Slice (Uplink)",
       "type": "timeseries"
     },
     {
@@ -4392,13 +4392,757 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (slice, probe_role, mode) (rate(gtp_teid_latency_events_total[30s]))",
-          "legendFormat": "{{slice}} | {{probe_role}} | {{mode}}",
+          "expr": "sum by (slice, probe_role) (rate(gtp_teid_latency_events_total{mode=\"core\"}[30s]))",
+          "legendFormat": "{{slice}} | {{probe_role}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Latency Event Rate Per Slice",
+      "title": "Latency Event Rate Per Slice (Uplink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 183
+      },
+      "id": 127,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_sum{mode=\"ran\"}[30s])) / sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_count{mode=\"ran\"}[30s])) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mean Latency Per UE (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 183
+      },
+      "id": 128,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (le, imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"ran\"}[30s]))) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "P50 Latency Per UE (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 191
+      },
+      "id": 129,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"ran\"}[30s]))) / 1000000",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "P95 Latency Per UE (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 191
+      },
+      "id": 130,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (imsi, ue_ip, slice, probe_role) (rate(gtp_teid_latency_events_total{mode=\"ran\"}[30s]))",
+          "legendFormat": "{{imsi}} | {{ue_ip}} | {{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Latency Event Rate Per UE (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 199
+      },
+      "id": 131,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (slice, probe_role) (rate(gtp_teid_latency_observed_ns_sum{mode=\"ran\"}[30s])) / sum by (slice, probe_role) (rate(gtp_teid_latency_observed_ns_count{mode=\"ran\"}[30s])) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mean Latency Per Slice (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 199
+      },
+      "id": 132,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (le, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"ran\"}[30s]))) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "P50 Latency Per Slice (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 207
+      },
+      "id": 133,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, slice, probe_role) (rate(gtp_teid_latency_observed_ns_bucket{mode=\"ran\"}[30s]))) / 1000000",
+          "legendFormat": "{{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "P95 Latency Per Slice (Downlink)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "monarch-thanos"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 207
+      },
+      "id": 134,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (slice, probe_role) (rate(gtp_teid_latency_events_total{mode=\"ran\"}[30s]))",
+          "legendFormat": "{{slice}} | {{probe_role}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Latency Event Rate Per Slice (Downlink)",
       "type": "timeseries"
     },
     {
@@ -4407,7 +5151,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 183
+        "y": 215
       },
       "id": 110,
       "panels": [],
@@ -4479,7 +5223,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 184
+        "y": 216
       },
       "id": 111,
       "options": {
@@ -4572,7 +5316,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 184
+        "y": 216
       },
       "id": 112,
       "options": {
@@ -4665,7 +5409,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 192
+        "y": 224
       },
       "id": 113,
       "options": {
@@ -4758,7 +5502,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 192
+        "y": 224
       },
       "id": 114,
       "options": {
@@ -4851,7 +5595,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 200
+        "y": 232
       },
       "id": 115,
       "options": {
@@ -4944,7 +5688,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 200
+        "y": 232
       },
       "id": 116,
       "options": {
@@ -5037,7 +5781,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 208
+        "y": 240
       },
       "id": 117,
       "options": {
@@ -5130,7 +5874,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 208
+        "y": 240
       },
       "id": 118,
       "options": {
@@ -5188,6 +5932,6 @@
   "timezone": "",
   "title": "Monarch Dashboard",
   "uid": "f1471646-a245-4f23-a3e1-452baa6558c8",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
