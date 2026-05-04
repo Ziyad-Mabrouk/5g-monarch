@@ -59,3 +59,66 @@ spec:
       port: 9090 # defined in upf chart
   selector:
     nf: upf # target upf pods
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf-latency-service
+  namespace: open5gs
+  labels:
+    nf: upf
+    app: monarch
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/latency"
+    prometheus.io/port: "9100"
+spec:
+  clusterIP: None
+  ports:
+    - name: latency # expose metrics port
+      port: 9100 # defined in upf chart
+  selector:
+    nf: upf # target upf pods
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf-latency-service2
+  namespace: open5gs
+  labels:
+    nf: upf
+    app: monarch
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/latency"
+    prometheus.io/port: "9101"
+spec:
+  clusterIP: None
+  ports:
+    - name: latency # expose metrics port
+      port: 9101 # defined in upf chart
+  selector:
+    nf: upf # target upf pods
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: packet-pairer-service
+  namespace: open5gs
+  labels:
+    nf: same-packet-pairer
+    app: monarch
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "9200"
+spec:
+  clusterIP: None
+  ports:
+    - name: metrics # expose metrics port
+      port: 9200
+  selector:
+    nf: same-packet-pairer # target pod

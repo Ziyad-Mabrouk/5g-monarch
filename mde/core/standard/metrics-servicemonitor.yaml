@@ -51,3 +51,21 @@ spec:
   endpoints:
     - port: metrics
       interval: "${MONARCH_MONITORING_INTERVAL}"
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: packet-pairer-servicemonitor
+  namespace: monarch
+  labels:
+    nf: same-packet-pairer
+    app: monarch
+spec:
+  namespaceSelector:
+    any: true # important otherwise this is not picked up
+  selector:
+    matchLabels:
+      nf: same-packet-pairer # target upf service
+  endpoints:
+    - port: metrics
+      interval: "${MONARCH_MONITORING_INTERVAL}"

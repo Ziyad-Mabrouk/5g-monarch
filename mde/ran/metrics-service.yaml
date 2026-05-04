@@ -18,3 +18,25 @@ spec:
       port: 9090
   selector:
     nf: gnb # target gnb pod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gnb-latency-metrics-service
+  namespace: open5gs
+  labels:
+    nf: gnb
+    app: monarch
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/latency"
+    prometheus.io/port: "9100"
+spec:
+  clusterIP: None
+  ports:
+    - name: latency # expose metrics port
+      port: 9100
+  selector:
+    nf: gnb # target pod
+
