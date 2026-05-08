@@ -537,7 +537,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "gtp_teid_latency_ns{imsi=\"001010000001121\",probe_role=~\"gnb|upf\"}/1000000",
+          "expr": "gtp_teid_latency_ns{imsi=\"001010000000006\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -630,7 +630,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "gtp_teid_latency_ns{imsi=\"001010000001123\",probe_role=~\"gnb|upf\"}/1000000",
+          "expr": "gtp_teid_latency_ns{imsi=\"001010000000007\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -723,7 +723,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "gtp_teid_latency_ns{imsi=\"001010000001122\",probe_role=~\"gnb|upf\"}/1000000",
+          "expr": "gtp_teid_latency_ns{imsi=\"001010000000008\",probe_role=~\"gnb|upf\"}/1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -828,7 +828,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000001121\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000001121\"}[2s])) / 1000000",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000000006\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000000006\"}[2s])) / 1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -920,7 +920,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000001123\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000001123\"}[2s])) / 1000000",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000000007\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000000007\"}[2s])) / 1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -1012,7 +1012,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000001122\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000001122\"}[2s])) / 1000000",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_sum{imsi=\"001010000000008\"}[2s])) / sum by (mode, probe_role) (rate(gtp_teid_latency_observed_ns_count{imsi=\"001010000000008\"}[2s])) / 1000000",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -1117,7 +1117,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000001121\"}[2s]))",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000000006\"}[2s]))",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -1209,7 +1209,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000001123\"}[2s]))",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000000007\"}[2s]))",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
@@ -1301,7 +1301,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000001122\"}[2s]))",
+          "expr": "sum by (mode, probe_role) (rate(gtp_teid_latency_events_total{imsi=\"001010000000008\"}[2s]))",
           "interval": "",
           "legendFormat": "{{mode}},{{probe_role}}",
           "range": true,
