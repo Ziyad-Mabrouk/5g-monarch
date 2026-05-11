@@ -66,7 +66,7 @@ Monarch's KPI computation module leverages the Python HTTP API to query raw metr
 
 
 **Task 3**: 
-- **Task 3** of `labs/lab3/exercise.py` dives deeper into composing slice-level metrics, specifically focusing on calculating resource utilization for slice 1 (with `SNSSAI=1-000001`). 
+- **Task 3** of `labs/lab3/exercise.py` dives deeper into composing slice-level metrics, specifically focusing on calculating resource utilization for slice 1 (with `SNSSAI=1-100000`). 
 - You'll combine multiple queries to determine memory usage, providing a practical understanding of how to build KPIs from various metric sources.
 
 ---

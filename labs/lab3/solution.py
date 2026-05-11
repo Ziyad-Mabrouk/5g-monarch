@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     ################ TASK 3: Compose Slice-Level KPIs ##############################
 
-    # Task 3: Calculate the memory usage percentage for Slice 1 (SNSSAI=1-000001).
+    # Task 3: Calculate the memory usage percentage for Slice 1 (SNSSAI=1-100000).
     # Step 1: Retrieve the memory requests and usage for SMF1 and UPF1.
     # Use appropriate queries and hints provided to complete each step below.
 

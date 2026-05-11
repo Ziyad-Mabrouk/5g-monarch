@@ -165,7 +165,7 @@ Search for the metric `fivegs_amffunction_rm_registeredsubnbr`. This metric trac
 
 The SMF manages session IDs (`seid`), which are essential for tracking connections across slices. Query the metric that shows session IDs. 
 
-**Question**: Which session IDs are associated with slice 1 with `SNSSAI=1-000001`?
+**Question**: Which session IDs are associated with slice 1 with `SNSSAI=1-100000`?
 
 ---
 # Next Steps

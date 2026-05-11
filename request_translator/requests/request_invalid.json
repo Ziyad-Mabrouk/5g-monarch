@@ -11,7 +11,7 @@
             "sub_counter_type": "SNSSAI",
             "sub_counter_ids": [
                 "1-0xFFFFFF",
-                "2-000001"
+                "1-100000"
             ]
         },
         "units": "Mbps"
