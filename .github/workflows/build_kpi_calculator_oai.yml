@@ -9,7 +9,7 @@ on:
 
 env:
   GHCR_USER: ziyad-mabrouk
-  TAG: v1.0.0-standard
+  TAG: v1.0.1-standard
 
 jobs:
 

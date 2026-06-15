@@ -7,6 +7,7 @@
 Prometheus exporter which exports RAN KPI.
 For use with the 5G-MONARCH project and OAI.
 """
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 import os
 import logging
@@ -56,33 +57,33 @@ def query_prometheus(params, url):
         log.error(f"Failed to parse Prometheus response: {e}")
         log.warning("No data available!")
 
+
+def _aggregate_by_rnti(data):
+    """
+    Sums bytes across all LCIDs per RNTI.
+    Returns: {rnti: value}
+    """
+    agg = defaultdict(float)
+    for r in data:
+        rnti = r["metric"].get("rnti")
+        value = float(r["value"][1])
+        if rnti:
+            agg[rnti] += value
+    return agg
+
 def get_mac_throughput_per_rnti_and_direction(direction):
     """
     Returns throughput per UE RNTI for the specified direction: 'uplink' or 'downlink'.
-    Uses Prometheus metrics: oai_gnb_mac_tx_bytes or oai_gnb_mac_rx_bytes
+    Uses Prometheus metrics: oai_gnb_mac_lcid_tx_bytes or oai_gnb_mac_lcid_rx_bytes
     Returns a dictionary of the form {rnti: value (bits/sec)}
     """
     if direction == "downlink":
-        metric = "oai_gnb_mac_tx_bytes"
+        metric = "oai_gnb_mac_lcid_tx_bytes"
     elif direction == "uplink":
-        metric = "oai_gnb_mac_rx_bytes"
+        metric = "oai_gnb_mac_lcid_rx_bytes"
     else:
         log.warning(f"Invalid MAC direction: {direction}")
         return {}
-
-    # query = f'rate({metric}[{TIME_RANGE}]) * 8'  # bytes/sec -> bits/sec
-    # log.debug(query)
-    # params = {'query': query}
-    # results = query_prometheus(params, MONARCH_THANOS_URL)
-
-    # throughput_per_rnti = {}
-    # if results:
-    #     for result in results:
-    #         rnti = result["metric"]["rnti"]
-    #         value = float(result["value"][1])
-    #         if rnti:
-    #             throughput_per_rnti[rnti] = value
-    # return throughput_per_rnti
 
     utc = timezone.utc
     end_time = datetime.now(utc)
@@ -98,41 +99,46 @@ def get_mac_throughput_per_rnti_and_direction(direction):
         "time": start_time.replace(tzinfo=None).timestamp()
     }, MONARCH_THANOS_URL)
 
-    # match RNTIs and compute throughput manually
+    # aggregate across LCIDs per RNTI
+    end_agg = _aggregate_by_rnti(end_data)
+    start_agg = _aggregate_by_rnti(start_data)
+
     throughput_per_rnti = {}
 
-    for result in end_data:
-        rnti = result["metric"]["rnti"]
-        end_value = float(result["value"][1])
-        start_value = next(
-            (float(r["value"][1]) for r in start_data if r["metric"]["rnti"] == rnti), None
-        )
-        if start_value is not None:
-            delta_bytes = end_value - start_value
-            bits_per_sec = (delta_bytes * 8) / int(TIME_RANGE[:-1])  # seconds
-            throughput_per_rnti[rnti] = bits_per_sec
-    return throughput_per_rnti 
+    for rnti, end_value in end_agg.items():
+        start_value = start_agg.get(rnti)
+
+        if start_value is None:
+            continue
+
+        delta_bytes = end_value - start_value
+        bits_per_sec = (delta_bytes * 8) / int(TIME_RANGE[:-1])
+
+        throughput_per_rnti[rnti] = bits_per_sec
+
+    return throughput_per_rnti
    
 def get_number_ues():
     rntis = set()
-    metric = "oai_gnb_mac_tx_bytes"
-    
-    query = f'rate({metric}[{TIME_RANGE}])'
+    metric = "oai_gnb_mac_lcid_tx_bytes"
+
+    # Only consider LCID 4
+    query = f'{metric}{{lcid="4"}}'
     results = query_prometheus({'query': query}, MONARCH_THANOS_URL)
 
     if not results:
-        log.warning("No rate results from oai_gnb_mac_tx_bytes for number_ues")
+        log.warning("No LCID=4 results for number_ues")
         return 0
 
     for result in results:
         rnti = result["metric"].get("rnti")
-        value = float(result["value"][1])
-        log.debug(f"RNTI: {rnti}, rate: {value}")
-        if rnti and value > 0:
+
+        # Presence of LCID=4 series = UE is "connected"
+        if rnti:
             rntis.add(rnti)
 
     count = len(rntis)
-    log.info(f"Found {count} active RNTIs (non-zero tx rate) for number_ues")
+    log.info(f"Found {count} connected UEs (LCID=4 presence)")
     return count
 
 def get_saturation_percentage():

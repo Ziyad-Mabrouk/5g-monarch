@@ -19,7 +19,7 @@ spec:
         component: kpi-calculator-oai
     spec:
       containers:
-        - image: ghcr.io/ziyad-mabrouk/kpi-calculator-oai:v1.0.0-standard
+        - image: ghcr.io/ziyad-mabrouk/kpi-calculator-oai:v1.0.1-standard
           name: kpi-calculator-oai
           imagePullPolicy: Always
           ports:
