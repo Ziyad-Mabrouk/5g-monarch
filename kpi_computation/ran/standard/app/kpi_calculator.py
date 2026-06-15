@@ -143,24 +143,24 @@ def get_number_ues():
 
 def get_saturation_percentage():
     """
-    Compute gNB PRB saturation only for UEs with active traffic:
-    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
+    Compute gNB PRB saturation only for UEs with LCID=4 (connected UEs):
+    (sum of mac_nprb for LCID=4 UEs) / (total PRBs from L1 stats) * 100
     """
-    active_rntis = set()
-    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
-    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
 
-    
-    if tx_results:
-        for result in tx_results:
+    connected_rntis = set()
+    lcid4_query = 'oai_gnb_mac_lcid_tx_bytes{lcid="4"}'
+    lcid4_results = query_prometheus({"query": lcid4_query}, MONARCH_THANOS_URL)
+
+    if lcid4_results:
+        for result in lcid4_results:
             rnti = result["metric"].get("rnti")
-            value = float(result["value"][1])
-            if rnti and value > 0:
-                active_rntis.add(rnti)
+            if rnti:
+                connected_rntis.add(rnti)
     else:
-        log.warning("No active RNTIs found from tx_bytes rate")
+        log.warning("No LCID=4 results found")
 
-    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
+    log.info(f"Found {len(connected_rntis)} connected UEs (LCID=4)")
+
     mac_nprb_query = "oai_gnb_mac_nprb"
     nprb_results = query_prometheus({"query": mac_nprb_query}, MONARCH_THANOS_URL)
 
@@ -169,10 +169,10 @@ def get_saturation_percentage():
         for result in nprb_results:
             try:
                 rnti = result["metric"]["rnti"]
-                if rnti in active_rntis:
+                if rnti in connected_rntis:
                     val = float(result["value"][1])
                     total_nprb += val
-                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
+                    log.debug(f"NPRB for connected RNTI {rnti}: {val}")
             except (KeyError, ValueError) as e:
                 log.warning(f"Failed to parse NPRB result: {e}")
     else:
@@ -181,21 +181,25 @@ def get_saturation_percentage():
     l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
     if not l1_result:
         log.warning("No results for oai_gnb_l1_total_prbs")
-        return
+        return 0.0
 
     try:
         total_prbs = float(l1_result[0]["value"][1])
-        log.debug(f"Total PRBs from L1: {total_prbs}")
-    except (IndexError, KeyError, ValueError) as e:
-        log.warning(f"Error parsing total PRBs: {e}")
-        return
+    except (IndexError, KeyError, ValueError):
+        log.warning("Error parsing total PRBs")
+        return 0.0
 
     if total_prbs == 0:
-        log.warning("Total PRBs is zero, cannot divide!")
-        return
+        log.warning("Total PRBs is zero")
+        return 0.0
 
     saturation_percentage = (total_nprb / total_prbs) * 100
-    log.info(f"Computed Saturation = {saturation_percentage:.2f}% (Active NPRBs={total_nprb}, Total PRBs={total_prbs})")
+
+    log.info(
+        f"Computed Saturation = {saturation_percentage:.2f}% "
+        f"(Connected NPRBs={total_nprb}, Total PRBs={total_prbs})"
+    )
+
     return saturation_percentage
 
 def get_saturation_percentage_per_rnti():
