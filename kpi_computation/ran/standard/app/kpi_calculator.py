@@ -204,25 +204,24 @@ def get_saturation_percentage():
 
 def get_saturation_percentage_per_rnti():
     """
-    Compute gNB PRB saturation only for UEs with active traffic:
-    (sum of mac_nprb for active UEs) / (total PRBs from L1 stats) * 100
+    Compute gNB PRB saturation only for UEs with LCID=4 (connected UEs):
+    (sum of mac_nprb for LCID=4 UEs) / (total PRBs from L1 stats) * 100
     Returns a dictionary of the form {rnti: value (percentage)}
     """
-    active_rntis = set()
-    tx_bytes_query = f'rate(oai_gnb_mac_tx_bytes[{TIME_RANGE}])'
-    tx_results = query_prometheus({"query": tx_bytes_query}, MONARCH_THANOS_URL)
 
-    
-    if tx_results:
-        for result in tx_results:
+    connected_rntis = set()
+    lcid4_query = 'oai_gnb_mac_lcid_tx_bytes{lcid="4"}'
+    lcid4_results = query_prometheus({"query": lcid4_query}, MONARCH_THANOS_URL)
+
+    if lcid4_results:
+        for result in lcid4_results:
             rnti = result["metric"].get("rnti")
-            value = float(result["value"][1])
-            if rnti and value > 0:
-                active_rntis.add(rnti)
+            if rnti:
+                connected_rntis.add(rnti)
     else:
-        log.warning("No active RNTIs found from tx_bytes rate")
+        log.warning("No LCID=4 results found")
 
-    log.info(f"Found {len(active_rntis)} active RNTIs (non-zero tx rate) for number_ues")
+    log.info(f"Found {len(connected_rntis)} connected UEs (LCID=4)")
 
     l1_result = query_prometheus({"query": "oai_gnb_l1_total_prbs"}, MONARCH_THANOS_URL)
     if not l1_result:
@@ -248,10 +247,10 @@ def get_saturation_percentage_per_rnti():
         for result in nprb_results:
             try:
                 rnti = result["metric"]["rnti"]
-                if rnti in active_rntis:
+                if rnti in connected_rntis:
                     val = float(result["value"][1])
                     nprbs[rnti] = val
-                    log.debug(f"NPRB for active RNTI {rnti}: {val}")
+                    log.debug(f"NPRB for connected RNTI {rnti}: {val}")
                 else:
                     val = float(0)
                     nprbs[rnti] = val
