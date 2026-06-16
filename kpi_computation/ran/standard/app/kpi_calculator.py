@@ -304,6 +304,10 @@ def export_saturation_percentage_to_prometheus(rnti, value):
     SATURATION_PERCENTAGE.labels(rnti=rnti).set(value)
 
 def run_kpi_computation():
+    # Clear stale labelled metrics before each update so removed UEs do not remain exported.
+    MAC_THROUGHPUT.clear()
+    SATURATION_PERCENTAGE.clear()
+
     directions = ["uplink", "downlink"]
 
     for direction in directions:
@@ -318,8 +322,9 @@ def run_kpi_computation():
     # export_saturation_percentage_to_prometheus(saturation_percentage)
 
     saturation_percentage = get_saturation_percentage_per_rnti()
-    for rnti, value in saturation_percentage.items():
-        export_saturation_percentage_to_prometheus(rnti, value)
+    if saturation_percentage:
+        for rnti, value in saturation_percentage.items():
+            export_saturation_percentage_to_prometheus(rnti, value)
 
 
 if __name__ == "__main__":
