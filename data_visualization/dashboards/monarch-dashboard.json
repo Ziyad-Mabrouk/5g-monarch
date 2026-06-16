@@ -1625,14 +1625,14 @@
             "uid": "monarch-thanos"
           },
           "editorMode": "code",
-          "expr": "oai_gnb_mac_snr",
+          "expr": "oai_gnb_mac_cqi",
           "instant": false,
           "legendFormat": "ue_rnti={{rnti}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SNR per RNTI",
+      "title": "CQI per RNTI",
       "type": "timeseries"
     },
     {
